@@ -1,0 +1,8 @@
+[
+    {"name" : "Grass", "movement_cost" : 1, "color" : [124,255,0]},
+    {"name" : "Road", "movement_cost" : 0.5, "color" : [169, 169, 169]},
+    {"name" : "Water", "movement_cost" : 3, "color" : [112,141,249]},
+    {"name" : "Path", "movement_cost" : 0.67, "color" : [155,118,83]},
+    {"name" : "Lava", "movement_cost" : 100, "color" : [255,120,20]},
+    {"name" : "Impassable Hill", "movement_cost" : 100, "color" : [100,100,0]}
+]
