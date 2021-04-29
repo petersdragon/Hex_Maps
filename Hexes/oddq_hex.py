@@ -15,12 +15,11 @@ class OddQ_Hex():
         self.draw_start = {'x':self.radius, 'y':self.radius+offset}   # Offset to start drawing at (the zero location)
         self.x_pixel = self.x*modify['x1']*self.radius + self.draw_start['x']
         self.y_pixel = (self.x % 2)*modify['x2']*self.radius + self.y*modify['y']*self.radius + self.draw_start['y']
+        self.unit = None
 
     def draw_hex(self, surface, mode, x_offset, y_offset, font=None):
         n, r = self.vertex_count, self.radius
         x, y = (self.x_pixel + x_offset, self.y_pixel + y_offset)   # Determine the total offset for the hex
-
-
         pygame.draw.polygon(surface, self.terrain.color, [
             (x + r * cos(2 * pi * i / n), y + r * sin(2 * pi * i / n))
             for i in range(n)])
@@ -31,3 +30,6 @@ class OddQ_Hex():
         if mode == "editor": 
             text = font.render("("+str(int(self.x))+","+str(int(self.y))+")", True, (0, 0, 0))
             surface.blit(text, (x - self.radius/3, y - self.radius/8)) # create a text suface object, on which text is drawn.
+
+    def add_unit(self):
+        pass

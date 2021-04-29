@@ -30,7 +30,7 @@ class ScrollBar(object):
             self.image_1 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/left.png')).convert()     # Load the image for the scrollbar's left arrow
             self.image_2 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/right.png')).convert()   # Load the image for the scrollbar's right arrow
 
-    def check_events(self, event):
+    def handle_event(self, event):
         if event.type == pygame.VIDEORESIZE:
             self.window_resize()
         self.event_handler(event)     # Handle a change in the position of the scrollbar

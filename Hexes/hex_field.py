@@ -11,6 +11,13 @@ from Hexes.cube_hex import Cube_Hex
 from Hexes.oddq_hex import OddQ_Hex
 from Hexes.terrain import Terrain
 
+# Mouse input values
+LEFT_CLICK = 1
+MIDDLE_CLICK = 2
+RIGHT_CLICK = 3
+SCROLL_UP = 4
+SCROLL_DOWN = 5
+
 class Hex_Field():
     def __init__(self,surface,mode=None,offset=0,THIS_FOLDER=''):
         # Defines how a single hex tile of the grid is stored in its various forms
@@ -21,8 +28,7 @@ class Hex_Field():
         self.horizontal_hexes = 1
         self.field = []
         self.offset = offset
-        self.THIS_FOLDER = THIS_FOLDER
-        self.file_name = "\\utilities\\terrain_info.json"
+        self.file_path = THIS_FOLDER + "\\utilities\\terrain_info.json"
         self.terrain_list = []
         self.load_terrain_list()
         self.current_terrain = self.terrain_list[0]
@@ -63,7 +69,7 @@ class Hex_Field():
         self.field = [] # Empty the hex field
 
     def load_terrain_list(self):
-        with open(self.THIS_FOLDER + self.file_name, newline='') as f:
+        with open(self.file_path, newline='') as f:
             obj = json.loads(f.read())
             for terrain in obj:
                 self.terrain_list.append(Terrain(**terrain))
@@ -87,7 +93,8 @@ class Hex_Field():
         self.current_terrain = self.terrain_list[index]
         return self.current_terrain
 
-    def mouse_click_event(self, x_offset=0, y_offset=0):
+    def mouse_click_event(self, event, x_offset=0, y_offset=0):
+
         (x, y) = pygame.mouse.get_pos() #get mouse coordinates
         # get the center of the hex, the subtract the positions. If the distance is less than the radius, then the hex was clicked
         for hexagon in self.field:
@@ -96,8 +103,13 @@ class Hex_Field():
 
             distance = sqrt(x_pos**2 + y_pos**2)    # Pythagorean's theorem
             if distance < self.radius*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
-                hexagon.terrain = self.current_terrain   # set the terrain type of the hex
-                break    # Exit the loop
+                if event.button == LEFT_CLICK:
+                    hexagon.terrain = self.current_terrain   # set the terrain type of the hex
+                    break    # Exit the loop
+                elif event.button == RIGHT_CLICK:
+                    if hexagon.unit == None:
+                        hexagon.addUnit()
+
 
     def get_field_dimensions(self):
         field_height, field_width = self.vertical_hexes*self.radius*self.modify['y'] + 2*self.radius, self.horizontal_hexes*self.radius*self.modify['x1'] + 1.5*self.radius    # Determine the height and width of the hex field based on how many hexes there are in each dimension
