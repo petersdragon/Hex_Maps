@@ -2,10 +2,9 @@ import pygame, pygame_menu, csv, sys, os
 from pygame import Rect
 from Hexes.hex_field import Hex_Field
 from Entities.armies import Armies
-from scrollbar_master.scrollbar import ScrollBar
+from utilities.scrollbar_master.scrollbar import ScrollBar
 from utilities.button import Button
 from utilities.input_box import InputBox
-from popup_menu.gamelib.popup_menu import NonBlockingPopupMenu
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -41,18 +40,19 @@ class Map_Editor_Window():
         self.surface = pygame.display.get_surface()
         self.file_name = 'default'
         self.objects = []
-        self.armies = Armies(self.surface, offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
         self.screen = pygame.display.set_mode((self.surface.get_width(), self.surface.get_height()), pygame.RESIZABLE)  # Define the initial screen size and allow the screen to be resized
         self.selection_bar = RectObj(self.screen.get_width(), file_text_height)
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
         self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
         self.hex_field = Hex_Field(self.surface, [self.horizontal_scrollbar, self.vertical_scrollbar], mode="editor", offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
+        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
         self.user_input_file = InputBox(0, 0, file_text_width, file_text_height, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.save_map, text="Save Map", **BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.load_map, text="Load Map", **BUTTON_STYLE)
         self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, file_text_width/2, file_text_height), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **TERRAIN_BUTTON_STYLE)
-
+        self.select_unit_button = Button((self.select_terrain_button.rect.x + self.select_terrain_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **BUTTON_STYLE)
         self.objects.append(self.hex_field)
+        self.objects.append(self.armies)
         self.objects.append(self.selection_bar)
         self.objects.append(self.vertical_scrollbar)
         self.objects.append(self.horizontal_scrollbar)
@@ -60,6 +60,7 @@ class Map_Editor_Window():
         self.objects.append(self.save_button)
         self.objects.append(self.load_button)
         self.objects.append(self.select_terrain_button)
+        self.objects.append(self.select_unit_button)
         
         self.control_loop()     # Start the loop for the window
 
@@ -71,6 +72,12 @@ class Map_Editor_Window():
         self.select_terrain_button.color = self.hex_field.current_terrain.color
         self.select_terrain_button.set_text(self.hex_field.current_terrain.name)
 
+    '''
+        Comment for the function here
+    '''
+    def select_unit_button_callback(self):
+        self.armies.toggle_menu()
+        
     '''
         Load the map that has the name matching what is currently in the input text box from a CSV file into memory
     '''
