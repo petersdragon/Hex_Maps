@@ -5,6 +5,7 @@ from Entities.armies import Armies
 from scrollbar_master.scrollbar import ScrollBar
 from utilities.button import Button
 from utilities.input_box import InputBox
+from popup_menu.gamelib.popup_menu import NonBlockingPopupMenu
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -50,7 +51,7 @@ class Map_Editor_Window():
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.save_map, text="Save Map", **BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.load_map, text="Load Map", **BUTTON_STYLE)
         self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, file_text_width/2, file_text_height), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **TERRAIN_BUTTON_STYLE)
-        
+
         self.objects.append(self.hex_field)
         self.objects.append(self.selection_bar)
         self.objects.append(self.vertical_scrollbar)
