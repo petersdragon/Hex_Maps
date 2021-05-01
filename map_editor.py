@@ -27,30 +27,52 @@ TERRAIN_BUTTON_STYLE = {
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__)) # Get the path to the program
 file_text_height = 32   # Define the height of the input text box (it will hold the map file name)
 file_text_width = 200   # Define the width of the input text box (it will hold the map file name)
-bg_color = (0, 0, 0)    # Define the background color of the screen to black
+bg_color = (0, 0, 0)    # Define the background color of the screen to black        
 
-
+'''
+    Comment for the class here
+'''
 class Map_Editor_Window():
+    '''
+        Comment for the function here
+    '''
     def __init__(self):
         self.surface = pygame.display.get_surface()
         self.file_name = 'default'
-        self.hex_field = Hex_Field(self.surface,mode="editor",offset=file_text_height,THIS_FOLDER=THIS_FOLDER)
+        self.objects = []
         self.armies = Armies(self.surface, offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
         self.screen = pygame.display.set_mode((self.surface.get_width(), self.surface.get_height()), pygame.RESIZABLE)  # Define the initial screen size and allow the screen to be resized
-        self.selectionBar = Rect(0, 0, self.screen.get_width(), file_text_height)
-        self.vertical_scrollbar = ScrollBar(self.hex_field.get_field_dimensions()['height'], pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
-        self.horizontal_scrollbar = ScrollBar(self.hex_field.get_field_dimensions()['width'], pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
+        self.selection_bar = RectObj(self.screen.get_width(), file_text_height)
+        self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
+        self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
+        self.hex_field = Hex_Field(self.surface, [self.horizontal_scrollbar, self.vertical_scrollbar], mode="editor", offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
         self.user_input_file = InputBox(0, 0, file_text_width, file_text_height, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.save_map, text="Save Map", **BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.load_map, text="Load Map", **BUTTON_STYLE)
         self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, file_text_width/2, file_text_height), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **TERRAIN_BUTTON_STYLE)
+        
+        self.objects.append(self.hex_field)
+        self.objects.append(self.selection_bar)
+        self.objects.append(self.vertical_scrollbar)
+        self.objects.append(self.horizontal_scrollbar)
+        self.objects.append(self.user_input_file)
+        self.objects.append(self.save_button)
+        self.objects.append(self.load_button)
+        self.objects.append(self.select_terrain_button)
+        
         self.control_loop()     # Start the loop for the window
 
+    '''
+        Comment for the function here
+    '''
     def select_terrain_button_callback(self):
         self.hex_field.next_terrain()
         self.select_terrain_button.color = self.hex_field.current_terrain.color
         self.select_terrain_button.set_text(self.hex_field.current_terrain.name)
 
+    '''
+        Load the map that has the name matching what is currently in the input text box from a CSV file into memory
+    '''
     def load_map(self):
         file_path = THIS_FOLDER + "\maps\\"
         # If the maps folder does not exist, make it
@@ -68,6 +90,9 @@ class Map_Editor_Window():
         except:
             pass
 
+    '''
+        Save the map currently shown on screen to a CSV file named whatever the user currently has in the input text box
+    '''
     def save_map(self):
         file_path = THIS_FOLDER + "\maps\\"
         # If the maps folder does not exist, make it
@@ -80,48 +105,35 @@ class Map_Editor_Window():
             for hexagon in self.hex_field.field:
                 map_writer.writerow([hexagon.x,hexagon.y,hexagon.terrain.name])
 
+    '''
+        Window Loop for the Map Editor
+    '''
     def control_loop(self):
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
                     quit()
                     exit()
-
-                elif event.type == pygame.MOUSEBUTTONUP:
-                        self.hex_field.mouse_click_event(event, self.horizontal_scrollbar.axis, self.vertical_scrollbar.axis)
-
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:      
-                        self.hex_field.add_row()        # Add a row of hexes to the field
-
-                    elif event.key == pygame.K_UP:
-                        self.hex_field.remove_row()     # Remove a row of hexes from the field
-
-                    elif event.key == pygame.K_LEFT:
-                        self.hex_field.remove_column()  # Remove a column of hexes from the field
-
-                    elif event.key == pygame.K_RIGHT:
-                        self.hex_field.add_column()     # Add a row of hexes to the field
                 
-                    self.vertical_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['height']     # Update the scrollbar with a new image height
-                    self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
+                for obj in self.objects:
+                    obj.handle_event(event)
 
-                self.user_input_file.handle_event(event)
-                self.save_button.handle_event(event)
-                self.load_button.handle_event(event)
-                self.select_terrain_button.handle_event(event)
-                self.vertical_scrollbar.handle_event(event)
-                self.horizontal_scrollbar.handle_event(event)
+            self.vertical_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['height']     # Update the scrollbar with a new image height
+            self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
 
-            self.screen.fill(bg_color)                 # Draw the background of the screen
-            self.hex_field.draw_hex_field(self.screen, self.horizontal_scrollbar.axis, self.vertical_scrollbar.axis)    # Draw the hex field on the screen
-            pygame.draw.rect(self.screen,BLACK,self.selectionBar)
-            self.user_input_file.update(self.screen)        # Draw the User Input File text box on the screen
-            self.save_button.update(self.screen)            # Draw the save button on the screen
-            self.load_button.update(self.screen)            # Draw the load button on the screen
-            self.select_terrain_button.update(self.screen)  # Draw the select terrain button on the screen
-            self.horizontal_scrollbar.update(self.screen)   # Update and draw the horizontal scrollbar
-            self.vertical_scrollbar.update(self.screen)     # Update and draw the vertical scrollbar
+            self.screen.fill(bg_color)  # Draw the background of the screen
+            for obj in self.objects:
+                obj.update(self.screen)
             
             pygame.display.flip()
 
+'''
+    Wrapper for a generic Rect shape from pygame
+'''
+class RectObj():
+    def __init__(self, width, height):
+        self.border = Rect(0, 0, width, height)
+    def handle_event(self,event):
+        pass
+    def update(self,screen):
+        pygame.draw.rect(screen, BLACK, self.border)

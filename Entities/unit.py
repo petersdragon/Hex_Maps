@@ -2,6 +2,9 @@ import pygame
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 
+'''
+    Comment for the class here
+'''
 class Unit():
     def __init__(self,team, unit_info, x, y, radius, modify):
         self.team = team
@@ -12,6 +15,9 @@ class Unit():
         self.y_pixel = (self.x % 2)*modify['x2']*self.radius + self.y*modify['y']*self.radius + self.draw_start['y']
         self.radius = radius
     
+    '''
+        Comment for the function here
+    '''
     def draw_unit(self, surface, x_offset, y_offset, color=WHITE, font=None):
         #circle(surface, color, center, radius, width=0, draw_top_right=None, draw_top_left=None, draw_bottom_left=None, draw_bottom_right=None)        
         x, y = (self.x_pixel + x_offset, self.y_pixel + y_offset)   # Determine the total offset for the hex
@@ -27,8 +33,13 @@ class Unit():
 #            (x + r * cos(2 * pi * i / n), y + r * sin(2 * pi * i / n))
 #            for i in range(n)], 3)
 
-        
+'''
+    Comment for the class here
+'''        
 class UnitInfo():
+    '''
+        Comment for the function here
+    '''
     def __init__(self, side, armor, melee_attack, melee_defend, archer_attack, archer_defend, movement):
         self.side = side
         self.armor = armor

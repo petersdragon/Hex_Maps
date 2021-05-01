@@ -10,7 +10,13 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 DEPTH = 20    # 20 pixel indent from edge of screen
 
+'''
+    Comment for the class here
+'''
 class ScrollBar(object):
+    '''
+        Comment for the function here
+    '''
     def __init__(self, image_dimension, screen, orientation="vertical"):
         self.orientation = orientation      # Dictates whether the scrollbar is horizontal or vertical
         self.image_dimension = image_dimension    # Height of the screen that needs to be scrolled
@@ -30,11 +36,30 @@ class ScrollBar(object):
             self.image_1 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/left.png')).convert()     # Load the image for the scrollbar's left arrow
             self.image_2 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/right.png')).convert()   # Load the image for the scrollbar's right arrow
 
+    '''
+        Comment for the function here
+    '''
     def handle_event(self, event):
         if event.type == pygame.VIDEORESIZE:
             self.window_resize()
-        self.event_handler(event)     # Handle a change in the position of the scrollbar
+        
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            if self.bar_rect.collidepoint(pos):     # If the mouse is pressing down on the scrollbar, scroll with the mouse
+                self.mouse_diff = pos[1] - self.bar_rect.y
+                self.on_bar = True
+            elif self.bar_1.collidepoint(pos):      # If the mouse is pressing down on image_1, move the scrollbar towards it
+                self.axis_change = 5
+            elif self.bar_2.collidepoint(pos):      # If the mouse is pressing down on image_2, move the scrollbar towards it
+                self.axis_change = -5
+                
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.axis_change = 0
+            self.on_bar = False
 
+    '''
+        Comment for the function here
+    '''
     def window_resize(self):
         self.SCREEN_WIDTH = pygame.display.get_surface().get_width()    # Width of the window to put the scrollbar in the correct place
         self.SCREEN_HEIGHT = pygame.display.get_surface().get_height()  # Height of the window to put the scrollbar in the correct place
@@ -52,6 +77,9 @@ class ScrollBar(object):
             self.bar_2 = pygame.Rect(self.SCREEN_WIDTH - DEPTH*2, self.SCREEN_HEIGHT - DEPTH, DEPTH, DEPTH)     # bar_2 location, corresponding to image_2
             self.border = pygame.Rect(0, self.SCREEN_HEIGHT - DEPTH, self.SCREEN_WIDTH, DEPTH)                  # Border to make it so that the image does not appear behind the scrollbar
 
+    '''
+        Comment for the function here
+    '''
     def update(self,screen):
         self.axis += self.axis_change
         if self.axis > 0:
@@ -109,22 +137,10 @@ class ScrollBar(object):
                 except: # No graphical benefit to setting anything different
                     pass
         self.draw(screen)
-        
-    def event_handler(self,event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            if self.bar_rect.collidepoint(pos):     # If the mouse is pressing down on the scrollbar, scroll with the mouse
-                self.mouse_diff = pos[1] - self.bar_rect.y
-                self.on_bar = True
-            elif self.bar_1.collidepoint(pos):      # If the mouse is pressing down on image_1, move the scrollbar towards it
-                self.axis_change = 5
-            elif self.bar_2.collidepoint(pos):      # If the mouse is pressing down on image_2, move the scrollbar towards it
-                self.axis_change = -5
-                
-        elif event.type == pygame.MOUSEBUTTONUP:
-            self.axis_change = 0
-            self.on_bar = False
-                
+                        
+    '''
+        Comment for the function here
+    '''
     def draw(self,screen):
         pygame.draw.rect(screen, (197,194,197), self.bar_rect)  # Draw the scrollbar rectangle on the screen
         if self.orientation == "vertical":
