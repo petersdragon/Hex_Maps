@@ -24,7 +24,6 @@ TERRAIN_BUTTON_STYLE = {
     "font_color": BLACK
 }
 
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__)) # Get the path to the program
 file_text_height = 32   # Define the height of the input text box (it will hold the map file name)
 file_text_width = 200   # Define the width of the input text box (it will hold the map file name)
 bg_color = (0, 0, 0)    # Define the background color of the screen to black        
@@ -36,21 +35,24 @@ class Map_Editor_Window():
     '''
         Comment for the function here
     '''
-    def __init__(self):
+    def __init__(self, PROGRAM_ROOT, main_menu):
+        self.PROGRAM_ROOT = PROGRAM_ROOT
+        self.main_menu = main_menu
         self.surface = pygame.display.get_surface()
-        self.file_name = 'default'
-        self.objects = []
+        self.file_name = 'default'  # Name of the map to open
+        self.objects = []           # List to more easily render objects in the Control Loop
         self.screen = pygame.display.set_mode((self.surface.get_width(), self.surface.get_height()), pygame.RESIZABLE)  # Define the initial screen size and allow the screen to be resized
         self.selection_bar = RectObj(self.screen.get_width(), file_text_height)
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
         self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
-        self.hex_field = Hex_Field(self.surface, [self.horizontal_scrollbar, self.vertical_scrollbar], mode="editor", offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
-        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset=file_text_height, THIS_FOLDER=THIS_FOLDER)
+        self.hex_field = Hex_Field(50, [self.horizontal_scrollbar, self.vertical_scrollbar], mode="editor", offset=file_text_height, PROGRAM_ROOT=PROGRAM_ROOT)
+        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset=file_text_height, PROGRAM_ROOT=PROGRAM_ROOT)
         self.user_input_file = InputBox(0, 0, file_text_width, file_text_height, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.save_map, text="Save Map", **BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.load_map, text="Load Map", **BUTTON_STYLE)
         self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, file_text_width/2, file_text_height), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **TERRAIN_BUTTON_STYLE)
-        self.select_unit_button = Button((self.select_terrain_button.rect.x + self.select_terrain_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **BUTTON_STYLE)
+        self.select_unit_button = Button((self.select_terrain_button.rect.x + self.select_terrain_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.select_unit_button_callback, text= "Add Unit (coming soon)", **BUTTON_STYLE)
+        # Add the objects to the list to be rendered easily in the Control Loop
         self.objects.append(self.hex_field)
         self.objects.append(self.armies)
         self.objects.append(self.selection_bar)
@@ -82,7 +84,7 @@ class Map_Editor_Window():
         Load the map that has the name matching what is currently in the input text box from a CSV file into memory
     '''
     def load_map(self):
-        file_path = THIS_FOLDER + "\maps\\"
+        file_path = self.PROGRAM_ROOT + "\maps\\"
         # If the maps folder does not exist, make it
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -102,7 +104,7 @@ class Map_Editor_Window():
         Save the map currently shown on screen to a CSV file named whatever the user currently has in the input text box
     '''
     def save_map(self):
-        file_path = THIS_FOLDER + "\maps\\"
+        file_path = self.PROGRAM_ROOT + "\maps\\"
         # If the maps folder does not exist, make it
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -120,17 +122,16 @@ class Map_Editor_Window():
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
-                    quit()
-                    exit()
+                    self.main_menu()            # Instead of going closing the program, go back to the main menu
                 
-                for obj in self.objects:
+                for obj in self.objects:        # handle events for all the objects
                     obj.handle_event(event)
 
             self.vertical_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['height']     # Update the scrollbar with a new image height
             self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
 
             self.screen.fill(bg_color)  # Draw the background of the screen
-            for obj in self.objects:
+            for obj in self.objects:    # Draw all the objects on the screen
                 obj.update(self.screen)
             
             pygame.display.flip()

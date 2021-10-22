@@ -3,10 +3,10 @@ import pygame, json
 from utilities.popup_menu.gamelib.popup_menu import NonBlockingPopupMenu
 
 class Armies():
-    def __init__(self, scrollbars, offset=0, THIS_FOLDER=''):
+    def __init__(self, scrollbars, offset=0, PROGRAM_ROOT=''):
         self.scrollbar = scrollbars
         self.unit_info = []
-        self.file_path = THIS_FOLDER + "//utilities//unit_info.json"
+        self.file_path = PROGRAM_ROOT + "//utilities//unit_info.json"
         self.unit_entry = []
         self.load_unit_info()
         self.armies = []
