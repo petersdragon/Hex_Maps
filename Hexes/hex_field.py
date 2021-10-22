@@ -6,6 +6,7 @@ For my cubic coordinates, I defined my hexes to be x,z,y instead of x,y,z.
 This made it so that both the OddQ x and y value was also the Cubic x and y value
 '''
 import pygame, csv, sys, json
+from os import path
 from math import sqrt
 from Hexes.cube_hex import Cube_Hex
 from Hexes.oddq_hex import OddQ_Hex
@@ -34,7 +35,7 @@ class Hex_Field():
         self.horizontal_hexes = 1
         self.field = []
         self.offset = offset
-        self.file_path = definitions.UTILITIES + "\\terrain_info.json"
+        self.file_path =  path.join(definitions.UTILITIES, "terrain_info.json")
         self.terrain_list = []
         self.load_terrain_list()
         self.current_terrain = self.terrain_list[0]
