@@ -10,7 +10,7 @@ from math import sqrt
 from Hexes.cube_hex import Cube_Hex
 from Hexes.oddq_hex import OddQ_Hex
 from Hexes.terrain import Terrain
-
+from utilities import definitions
 # Mouse input values
 LEFT_CLICK = 1
 MIDDLE_CLICK = 2
@@ -25,7 +25,7 @@ class Hex_Field():
     '''
         Comment for the function here
     '''
-    def __init__(self, radius, scrollbars, mode=None, offset=0, PROGRAM_ROOT=''):
+    def __init__(self, radius, scrollbars, mode=None, offset=0):
         self.modify = {'x1':1.5, 'x2':sqrt(3)/2, 'y':sqrt(3)} # Modifiers to line the hexes up into a uniform, clean grid
         self.surface = pygame.display.get_surface()
         self.radius = radius         # The radius (pixels from center to vertex) that I want my hexes to have
@@ -34,7 +34,7 @@ class Hex_Field():
         self.horizontal_hexes = 1
         self.field = []
         self.offset = offset
-        self.file_path = PROGRAM_ROOT + "\\utilities\\terrain_info.json"
+        self.file_path = definitions.UTILITIES + "\\terrain_info.json"
         self.terrain_list = []
         self.load_terrain_list()
         self.current_terrain = self.terrain_list[0]

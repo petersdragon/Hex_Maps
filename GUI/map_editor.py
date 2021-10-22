@@ -1,10 +1,10 @@
-import pygame, pygame_menu, csv, sys, os
-from pygame import Rect
+import pygame, pygame_menu, csv, os
 from Hexes.hex_field import Hex_Field
 from Entities.armies import Armies
 from utilities.scrollbar_master.scrollbar import ScrollBar
 from utilities.button import Button
 from utilities.input_box import InputBox
+from utilities import definitions
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -35,8 +35,7 @@ class Map_Editor_Window():
     '''
         Comment for the function here
     '''
-    def __init__(self, PROGRAM_ROOT, main_menu):
-        self.PROGRAM_ROOT = PROGRAM_ROOT
+    def __init__(self, main_menu):
         self.main_menu = main_menu
         self.surface = pygame.display.get_surface()
         self.file_name = 'default'  # Name of the map to open
@@ -45,8 +44,8 @@ class Map_Editor_Window():
         self.selection_bar = RectObj(self.screen.get_width(), file_text_height)
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
         self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
-        self.hex_field = Hex_Field(50, [self.horizontal_scrollbar, self.vertical_scrollbar], mode="editor", offset=file_text_height, PROGRAM_ROOT=PROGRAM_ROOT)
-        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset=file_text_height, PROGRAM_ROOT=PROGRAM_ROOT)
+        self.hex_field = Hex_Field(50, [self.horizontal_scrollbar, self.vertical_scrollbar], mode="editor", offset=file_text_height)
+        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset=file_text_height)
         self.user_input_file = InputBox(0, 0, file_text_width, file_text_height, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.save_map, text="Save Map", **BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, file_text_width/2, file_text_height), DARK_GRAY, self.load_map, text="Load Map", **BUTTON_STYLE)
@@ -84,14 +83,14 @@ class Map_Editor_Window():
         Load the map that has the name matching what is currently in the input text box from a CSV file into memory
     '''
     def load_map(self):
-        file_path = self.PROGRAM_ROOT + "\maps\\"
+        file_path = os.path.join(definitions.PROGRAM_ROOT, "maps")
         # If the maps folder does not exist, make it
         if not os.path.exists(file_path):
             os.makedirs(file_path)
 
         # Try to load the file. If it fails, don't crash
         try:
-            with open(file_path + self.user_input_file.getText() + ".csv", newline='') as f:
+            with open( os.path.join(file_path, self.user_input_file.getText() + ".csv"), newline='') as f:
                 reader = csv.reader(f,delimiter=',')
                 self.hex_field.clear_field()
                 for row in reader:
@@ -104,13 +103,13 @@ class Map_Editor_Window():
         Save the map currently shown on screen to a CSV file named whatever the user currently has in the input text box
     '''
     def save_map(self):
-        file_path = self.PROGRAM_ROOT + "\maps\\"
+        file_path = os.path.join(definitions.PROGRAM_ROOT, "maps")
         # If the maps folder does not exist, make it
         if not os.path.exists(file_path):
             os.makedirs(file_path)
         
         # Do I need to add a way to sort the hexes by coordinates before writing them to a file?
-        with open(file_path + self.user_input_file.getText() + ".csv", mode='w') as map_file:
+        with open(os.path.join(file_path, self.user_input_file.getText() + ".csv"), mode='w') as map_file:
             map_writer = csv.writer(map_file, delimiter=',', lineterminator='\r')
             for hexagon in self.hex_field.field:
                 map_writer.writerow([hexagon.x,hexagon.y,hexagon.terrain.name])
@@ -141,7 +140,7 @@ class Map_Editor_Window():
 '''
 class RectObj():
     def __init__(self, width, height):
-        self.border = Rect(0, 0, width, height)
+        self.border = pygame.Rect(0, 0, width, height)
     def handle_event(self,event):
         pass
     def update(self,screen):

@@ -9,10 +9,10 @@ SCREEN_WIDTH, SCREEN_HEIGHT = round(pygame.display.Info().current_w/1.1), round(
 surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 def open_map_editor():
-    Map_Editor_Window(definitions.PROGRAM_ROOT, main)
+    Map_Editor_Window(main)
 
 def open_map_selector():
-    Map_Selector_Window(definitions.PROGRAM_ROOT)
+    Map_Selector_Window()
 
 # https://pygame-menu.readthedocs.io/en/4.0.2/
 menu = pygame_menu.Menu('LOTR Menu', SCREEN_WIDTH, SCREEN_HEIGHT, theme=pygame_menu.themes.THEME_BLUE)
