@@ -126,6 +126,7 @@ class MapEditorWindow():
             self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
 
             self.screen.fill(definitions.BG_COLOR)  # Draw the background of the screen
+            
             # Draw all the objects on the screen
             self.hex_field.update(self.screen)     # Must be first so that the map does not cover any of the other objects
             self.vertical_scrollbar.update(self.screen)
