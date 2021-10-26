@@ -8,10 +8,11 @@ import pygame_menu
 from utilities import definitions
 from GUI.map_editor import MapEditorWindow
 
+pygame.init()           # Initialize an instance of pygame
+
 # Creates a list of tuples where the first element is the file name without the extension, the second is an arbitrary value to force the menu's dropselect to function in the desired fashion
 mapfiles = [(file_name.replace('.csv',''),1) for file_name in listdir(join(definitions.PROGRAM_ROOT, "maps")) if isfile(join(definitions.PROGRAM_ROOT, "maps", file_name))]    # Load file names into memory to allow user to select a map
 
-pygame.init()           # Initialize an instance of pygame
 SCREEN_WIDTH, SCREEN_HEIGHT = round(pygame.display.Info().current_w/1.1), round(pygame.display.Info().current_h/1.1) # Make the initial window the size of the display
 surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 

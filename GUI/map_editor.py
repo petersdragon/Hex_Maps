@@ -5,6 +5,7 @@ import os
 import csv
 import pygame
 from Hexes.hex_field import Hex_Field
+from utilities.option_box import OptionBox
 from Entities.armies import Armies
 from utilities.scrollbar_master.scrollbar import ScrollBar
 from utilities.button import Button
@@ -27,13 +28,14 @@ class MapEditorWindow():
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
         self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
         self.hex_field = Hex_Field(50, [self.horizontal_scrollbar, self.vertical_scrollbar], self.screen, mode="editor", offset= definitions.TEXT_HEIGHT)
-        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset= definitions.TEXT_HEIGHT)
+        #self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset= definitions.TEXT_HEIGHT)
         self.user_input_file = InputBox(0, 0, definitions.TEXT_WIDTH, definitions.TEXT_HEIGHT, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         
         # Place the various buttons in an orderly row
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.save_map, text="Save Map", **definitions.BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.load_map, text="Load Map", **definitions.BUTTON_STYLE)
-        self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **definitions.TERRAIN_BUTTON_STYLE)
+        self.select_terrain_button = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.BLACK, definitions.menus_font, self.hex_field.terrain_list, self.select_terrain_button_callback)
+#        self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **definitions.TERRAIN_BUTTON_STYLE)
         self.select_unit_button = Button((self.select_terrain_button.rect.x + self.select_terrain_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **definitions.BUTTON_STYLE)
 
         self.control_loop()     # Start the loop for the window
@@ -43,16 +45,16 @@ class MapEditorWindow():
         '''
         Comment for the function here
         '''
-        self.hex_field.next_terrain()
+        #self.hex_field.next_terrain()
+        self.hex_field.set_terrain_for_name(self.select_terrain_button.get_selected_option().name)
         self.select_terrain_button.color = self.hex_field.current_terrain.color
-        self.select_terrain_button.set_text(self.hex_field.current_terrain.name)
 
 
     def select_unit_button_callback(self):
         '''
             Comment for the function here
         '''
-        self.armies.toggle_menu()
+        #self.armies.toggle_menu()
         
     def load_map(self):
         '''
@@ -113,7 +115,7 @@ class MapEditorWindow():
                     end_events = False
                     break
                 self.hex_field.handle_event(event)
-                self.armies.handle_event(event)
+                #self.armies.handle_event(event)
                 self.selection_bar.handle_event(event)
                 self.user_input_file.handle_event(event)
                 self.save_button.handle_event(event)
@@ -131,7 +133,7 @@ class MapEditorWindow():
             self.hex_field.update(self.screen)     # Must be first so that the map does not cover any of the other objects
             self.vertical_scrollbar.update(self.screen)
             self.horizontal_scrollbar.update(self.screen)
-            self.armies.update(self.screen)
+            #self.armies.update(self.screen)
             self.selection_bar.update(self.screen)
             self.user_input_file.update(self.screen)
             self.save_button.update(self.screen)

@@ -9,6 +9,7 @@ import json
 from os import path
 from math import sqrt
 import pygame
+from pygame.constants import DOUBLEBUF
 from Hexes.cube_hex import Cube_Hex
 from Hexes.oddq_hex import OddQ_Hex
 from Hexes.terrain import Terrain
@@ -117,7 +118,7 @@ class Hex_Field():
 
     def next_terrain(self):
         '''
-        Comment for the function here
+            Comment for the function here
         '''
         index = self.terrain_list.index(self.current_terrain)+1
         if index >= len(self.terrain_list):
@@ -125,6 +126,21 @@ class Hex_Field():
         self.current_terrain = self.terrain_list[index]
         return self.current_terrain
 
+    def set_terrain_for_name(self, name):
+        '''
+            Set the terrain based on name.
+            Currently utilizes next_terrain function, which was used in the old method. Replace it with a proper search algorithm.
+        '''
+        if name != self.current_terrain.name:
+            initial_terrain = self.current_terrain
+            self.next_terrain()
+            while initial_terrain != self.current_terrain.name:
+                self.next_terrain()
+                if self.current_terrain.name == name:
+                    return -1
+
+
+         
 
     def handle_event(self, event):
         '''
@@ -143,11 +159,11 @@ class Hex_Field():
                         hexagon.terrain = self.current_terrain   # set the terrain type of the hex
                         break    # Exit the loop
                     elif event.button == definitions.RIGHT_CLICK:
-                        if hexagon.unit == None:
+                        if hexagon.unit is None:
                             hexagon.addUnit()
 
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:      
+            if event.key == pygame.K_DOWN:
                 self.add_row()        # Add a row of hexes to the field
 
             elif event.key == pygame.K_UP:

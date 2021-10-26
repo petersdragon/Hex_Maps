@@ -2,6 +2,12 @@
     Comment for the file here
 '''
 from os import path
+import pygame
+
+pygame.font.init()
+sysfont = pygame.font.get_default_font()
+menus_font = pygame.font.SysFont(sysfont, 16)
+
 
 UTILITIES = path.dirname(path.abspath(__file__))  # Get the path to this file
 PROGRAM_ROOT = path.dirname(UTILITIES)               # Get the path to this program
@@ -32,8 +38,10 @@ BUTTON_STYLE = {
     "clicked_color": GREEN,
     "clicked_font_color": BLACK,
     "hover_font_color": BLACK,
+    "font" : menus_font
 }
 
 TERRAIN_BUTTON_STYLE = {
-    "font_color": BLACK
+    "font_color": BLACK,
+    "font" : menus_font
 }

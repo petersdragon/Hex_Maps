@@ -4,7 +4,6 @@
 import json
 import pygame
 from Entities.unit import Unit, UnitInfo
-from utilities.popup_menu.gamelib.popup_menu import NonBlockingPopupMenu
 from utilities import definitions
 
 class Armies():
@@ -18,9 +17,6 @@ class Armies():
         self.unit_entry = []
         self.load_unit_info()
         self.armies = []
-        sysfont = pygame.font.get_default_font()
-        self.font = pygame.font.SysFont(sysfont, 24)
-        self.unit_menu = NonBlockingPopupMenu(self.unit_entry)
         self.menu_visible = False
 
     def load_unit_info(self):
