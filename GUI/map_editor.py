@@ -97,24 +97,24 @@ class MapEditorWindow():
         Window Loop for the Map Editor
         '''
         self.load_map()
-        end_events = False
+        block_events = False
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
                     self.main_menu()            # Instead of going closing the program, go back to the main menu
 
                 # handle events for all the objects
-                end_events = self.vertical_scrollbar.handle_event(event)    # Scrollbars must be first to avoid triggering other events when in use
-                if end_events:
-                    end_events = False
+                block_events = self.vertical_scrollbar.handle_event(event)    # Scrollbars must be first to avoid triggering other events when in use
+                if block_events:
+                    block_events = False
                     break
-                end_events = self.horizontal_scrollbar.handle_event(event)  # Scrollbars must be first to avoid triggering other events when in use
-                if end_events:
-                    end_events = False
+                block_events = self.horizontal_scrollbar.handle_event(event)  # Scrollbars must be first to avoid triggering other events when in use
+                if block_events:
+                    block_events = False
                     break
-                end_events = self.select_terrain_menu.handle_event(event)
-                if end_events:
-                    end_events = False
+                block_events = self.select_terrain_menu.handle_event(event)
+                if block_events:
+                    block_events = False
                     break
                 self.hex_field.handle_event(event)
                 #self.armies.handle_event(event)
