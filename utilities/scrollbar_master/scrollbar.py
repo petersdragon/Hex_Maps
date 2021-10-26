@@ -32,13 +32,13 @@ class ScrollBar(object):
             self.image_2 = pygame.image.load(os.path.join(definitions.UTILITIES, 'scrollbar_master/assets/right.png')).convert()   # Load the image for the scrollbar's right arrow
 
 
-    def handle_event(self, event, event_handled= False):
+    def handle_event(self, event):
         '''
             Comment for the function here
         '''
+        event_complete = False
         if event.type == pygame.VIDEORESIZE:
             self.window_resize()
-            event_handled = True
         
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
@@ -49,15 +49,14 @@ class ScrollBar(object):
                 self.axis_change = 5
             elif self.bar_2.collidepoint(pos):      # If the mouse is pressing down on image_2, move the scrollbar towards it
                 self.axis_change = -5
-            event_handled = True
                 
         elif event.type == pygame.MOUSEBUTTONUP:
             self.axis_change = 0
             if self.on_bar:
-                event_handled = True
-            self.on_bar = False
+                self.on_bar = False
+                event_complete = True
 
-        return event_handled
+        return event_complete
 
     def window_resize(self):
         '''

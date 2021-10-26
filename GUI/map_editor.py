@@ -22,7 +22,6 @@ class MapEditorWindow():
         self.main_menu = main_menu
         self.surface = pygame.display.get_surface()
         self.file_name = file_name  # Name of the map to open
-        self.objects = []           # List to more easily render objects in the Control Loop
         self.screen = pygame.display.set_mode((self.surface.get_width(), self.surface.get_height()), pygame.RESIZABLE)  # Define the initial screen size and allow the screen to be resized
         self.selection_bar = RectObj(self.screen.get_width(), definitions.TEXT_HEIGHT)
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
@@ -36,18 +35,6 @@ class MapEditorWindow():
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.load_map, text="Load Map", **definitions.BUTTON_STYLE)
         self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **definitions.TERRAIN_BUTTON_STYLE)
         self.select_unit_button = Button((self.select_terrain_button.rect.x + self.select_terrain_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **definitions.BUTTON_STYLE)
-        
-        # Add the objects to the list to be rendered easily in the Control Loop
-        self.objects.append(self.hex_field)             # Must be first so that the map does not cover any of the other objects
-        self.objects.append(self.vertical_scrollbar)
-        self.objects.append(self.horizontal_scrollbar)
-        self.objects.append(self.armies)
-        self.objects.append(self.selection_bar)
-        self.objects.append(self.user_input_file)
-        self.objects.append(self.save_button)
-        self.objects.append(self.load_button)
-        self.objects.append(self.select_terrain_button)
-        self.objects.append(self.select_unit_button)
 
         self.control_loop()     # Start the loop for the window
 
@@ -110,20 +97,46 @@ class MapEditorWindow():
         Window Loop for the Map Editor
         '''
         self.load_map()
+        end_events = False
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
                     self.main_menu()            # Instead of going closing the program, go back to the main menu
 
-                for obj in self.objects:        # handle events for all the objects
-                    obj.handle_event(event)
+                # handle events for all the objects
+                end_events = self.vertical_scrollbar.handle_event(event)    # Scrollbars must be first to avoid triggering other events when in use
+                if end_events:
+                    end_events = False
+                    break
+                end_events = self.horizontal_scrollbar.handle_event(event)  # Scrollbars must be first to avoid triggering other events when in use
+                if end_events:
+                    end_events = False
+                    break
+                self.hex_field.handle_event(event)
+                self.armies.handle_event(event)
+                self.selection_bar.handle_event(event)
+                self.user_input_file.handle_event(event)
+                self.save_button.handle_event(event)
+                self.load_button.handle_event(event)
+                self.select_terrain_button.handle_event(event)
+                self.select_unit_button.handle_event(event)
+
 
             self.vertical_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['height']     # Update the scrollbar with a new image height
             self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
 
             self.screen.fill(definitions.BG_COLOR)  # Draw the background of the screen
-            for obj in self.objects:    # Draw all the objects on the screen
-                obj.update(self.screen)
+            # Draw all the objects on the screen
+            self.hex_field.update(self.screen)     # Must be first so that the map does not cover any of the other objects
+            self.vertical_scrollbar.update(self.screen)
+            self.horizontal_scrollbar.update(self.screen)
+            self.armies.update(self.screen)
+            self.selection_bar.update(self.screen)
+            self.user_input_file.update(self.screen)
+            self.save_button.update(self.screen)
+            self.load_button.update(self.screen)
+            self.select_terrain_button.update(self.screen)
+            self.select_unit_button.update(self.screen)
 
             pygame.display.flip()
 
@@ -138,7 +151,7 @@ class RectObj():
         '''
             Comment for the function here
         '''
-    def update(self,screen):
+    def update(self, screen):
         '''
             Comment for the function here
         '''
