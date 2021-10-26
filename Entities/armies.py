@@ -1,9 +1,16 @@
+'''
+    Comment for the file here
+'''
+import json
+import pygame
 from Entities.unit import Unit, UnitInfo
-import pygame, json
 from utilities.popup_menu.gamelib.popup_menu import NonBlockingPopupMenu
 from utilities import definitions
 
 class Armies():
+    '''
+        Comment for the class here
+    '''
     def __init__(self, scrollbars, offset=0):
         self.scrollbar = scrollbars
         self.unit_info = []
@@ -17,6 +24,9 @@ class Armies():
         self.menu_visible = False
 
     def load_unit_info(self):
+        '''
+            Comment for the function here
+        '''
         with open(self.file_path, newline='') as f:
             obj = json.loads(f.read())
             for unit in obj:
@@ -41,20 +51,31 @@ class Armies():
                 self.unit_entry.append(armor_entry)
 
     def add_unit(self,x,y,team,data):
+        '''
+            Comment for the function here
+        '''
         self.armies.append(Unit(x,y,team,data))
 
     def update(self, surface):
+        '''
+            Comment for the function here
+        '''
         for unit in self.armies:
             unit.draw_unit(surface, self.scrollbar[0].axis, self.scrollbar[1].axis, self.font)
         self.unit_menu.draw()
 
     def toggle_menu(self):
-        if self.menu_visible == False:
+        '''
+            Comment for the function here
+        '''
+        if not self.menu_visible:
             self.unit_menu.show()
             self.menu_visible = True
-        elif self.menu_visible == True:
+        elif self.menu_visible:
             self.unit_menu.hide()
             self.menu_visible = False
 
     def handle_event(self, event):
-        pass
+        '''
+            Comment for the function here
+        '''

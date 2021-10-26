@@ -1,21 +1,16 @@
+'''
+    Comment for the file here
+'''
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygame
 import os
+import pygame
+from utilities import definitions
 
-
-# To find the path to the assests needed by the ScrollBar
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))    
-
-DEPTH = 20    # 20 pixel indent from edge of screen
-
-'''
-    Comment for the class here
-'''
 class ScrollBar(object):
     '''
-        Comment for the function here
+        Comment for the class here
     '''
     def __init__(self, image_dimension, screen, orientation="vertical"):
         self.orientation = orientation      # Dictates whether the scrollbar is horizontal or vertical
@@ -27,21 +22,23 @@ class ScrollBar(object):
         self.window_resize()
 
         if self.orientation == "vertical":
-            self.border = pygame.Rect(screen.get_width()-DEPTH, 0, DEPTH, screen.get_height())
-            self.image_1 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/up.png')).convert()     # Load the image for the scrollbar's up arrow
-            self.image_2 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/down.png')).convert() # Load the image for the scrollbar's down arrow
+            self.border = pygame.Rect(screen.get_width()-definitions.DEPTH, 0, definitions.DEPTH, screen.get_height())
+            self.image_1 = pygame.image.load(os.path.join(definitions.UTILITIES, 'scrollbar_master/assets/up.png')).convert()     # Load the image for the scrollbar's up arrow
+            self.image_2 = pygame.image.load(os.path.join(definitions.UTILITIES, 'scrollbar_master/assets/down.png')).convert() # Load the image for the scrollbar's down arrow
 
         elif self.orientation == "horizontal":
-            self.border = pygame.Rect(0, screen.get_height()-DEPTH, screen.get_width(),DEPTH)
-            self.image_1 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/left.png')).convert()     # Load the image for the scrollbar's left arrow
-            self.image_2 = pygame.image.load(os.path.join(THIS_FOLDER, 'assets/right.png')).convert()   # Load the image for the scrollbar's right arrow
+            self.border = pygame.Rect(0, screen.get_height()-definitions.DEPTH, screen.get_width(), definitions.DEPTH)
+            self.image_1 = pygame.image.load(os.path.join(definitions.UTILITIES, 'scrollbar_master/assets/left.png')).convert()     # Load the image for the scrollbar's left arrow
+            self.image_2 = pygame.image.load(os.path.join(definitions.UTILITIES, 'scrollbar_master/assets/right.png')).convert()   # Load the image for the scrollbar's right arrow
 
-    '''
-        Comment for the function here
-    '''
-    def handle_event(self, event):
+
+    def handle_event(self, event, event_handled= False):
+        '''
+            Comment for the function here
+        '''
         if event.type == pygame.VIDEORESIZE:
             self.window_resize()
+            event_handled = True
         
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
@@ -52,35 +49,40 @@ class ScrollBar(object):
                 self.axis_change = 5
             elif self.bar_2.collidepoint(pos):      # If the mouse is pressing down on image_2, move the scrollbar towards it
                 self.axis_change = -5
+            event_handled = True
                 
         elif event.type == pygame.MOUSEBUTTONUP:
             self.axis_change = 0
+            if self.on_bar:
+                event_handled = True
             self.on_bar = False
 
-    '''
-        Comment for the function here
-    '''
+        return event_handled
+
     def window_resize(self):
+        '''
+            Comment for the function here
+        '''
         self.SCREEN_WIDTH = pygame.display.get_surface().get_width()    # Width of the window to put the scrollbar in the correct place
         self.SCREEN_HEIGHT = pygame.display.get_surface().get_height()  # Height of the window to put the scrollbar in the correct place
         bar_length = 50                                                 # Length of the bit of the bar that can be scrolled
 
         if self.orientation == "vertical":
-            self.bar_rect = pygame.Rect(self.SCREEN_WIDTH - DEPTH, DEPTH, DEPTH, bar_length)                    # scrollbar block location
-            self.bar_1 = pygame.Rect(self.SCREEN_WIDTH - DEPTH, 0, DEPTH, DEPTH)                                # bar_1 location, corresponding to image_1
-            self.bar_2 = pygame.Rect(self.SCREEN_WIDTH - DEPTH, self.SCREEN_HEIGHT - DEPTH*2, DEPTH, DEPTH)     # bar_2 location, corresponding to image_2
-            self.border = pygame.Rect(self.SCREEN_WIDTH - DEPTH, 0, DEPTH, self.SCREEN_HEIGHT)                  # Border to make it so that the image does not appear behind the scrollbar
+            self.bar_rect = pygame.Rect(self.SCREEN_WIDTH - definitions.DEPTH, definitions.DEPTH, definitions.DEPTH, bar_length)                    # scrollbar block location
+            self.bar_1 = pygame.Rect(self.SCREEN_WIDTH - definitions.DEPTH, 0, definitions.DEPTH, definitions.DEPTH)                                # bar_1 location, corresponding to image_1
+            self.bar_2 = pygame.Rect(self.SCREEN_WIDTH - definitions.DEPTH, self.SCREEN_HEIGHT - definitions.DEPTH*2, definitions.DEPTH, definitions.DEPTH)     # bar_2 location, corresponding to image_2
+            self.border = pygame.Rect(self.SCREEN_WIDTH - definitions.DEPTH, 0, definitions.DEPTH, self.SCREEN_HEIGHT)                  # Border to make it so that the image does not appear behind the scrollbar
 
         elif self.orientation == "horizontal":
-            self.bar_rect = pygame.Rect(DEPTH, self.SCREEN_HEIGHT - DEPTH, bar_length, DEPTH)                   # scrollbar block location
-            self.bar_1 = pygame.Rect(0,self.SCREEN_HEIGHT - DEPTH, DEPTH, DEPTH)                                # bar_1 location, corresponding to image_1
-            self.bar_2 = pygame.Rect(self.SCREEN_WIDTH - DEPTH*2, self.SCREEN_HEIGHT - DEPTH, DEPTH, DEPTH)     # bar_2 location, corresponding to image_2
-            self.border = pygame.Rect(0, self.SCREEN_HEIGHT - DEPTH, self.SCREEN_WIDTH, DEPTH)                  # Border to make it so that the image does not appear behind the scrollbar
+            self.bar_rect = pygame.Rect(definitions.DEPTH, self.SCREEN_HEIGHT - definitions.DEPTH, bar_length, definitions.DEPTH)                   # scrollbar block location
+            self.bar_1 = pygame.Rect(0,self.SCREEN_HEIGHT - definitions.DEPTH, definitions.DEPTH, definitions.DEPTH)                                # bar_1 location, corresponding to image_1
+            self.bar_2 = pygame.Rect(self.SCREEN_WIDTH - definitions.DEPTH*2, self.SCREEN_HEIGHT - definitions.DEPTH, definitions.DEPTH, definitions.DEPTH)     # bar_2 location, corresponding to image_2
+            self.border = pygame.Rect(0, self.SCREEN_HEIGHT - definitions.DEPTH, self.SCREEN_WIDTH, definitions.DEPTH)                  # Border to make it so that the image does not appear behind the scrollbar
 
-    '''
-        Comment for the function here
-    '''
     def update(self,screen):
+        '''
+            Comment for the function here
+        '''
         self.axis += self.axis_change
         if self.axis > 0:
             self.axis = 0
@@ -95,16 +97,16 @@ class ScrollBar(object):
 
             if self.axis < -height_diff:    # If the scrollbar is scrolled farther than the image goes, limit it to keep the image onscreen
                 self.axis = -height_diff
-            scroll_length = self.SCREEN_HEIGHT - self.bar_rect.height - DEPTH*2
-            bar_half_length = self.bar_rect.height / 2 + DEPTH
+            scroll_length = self.SCREEN_HEIGHT - self.bar_rect.height - definitions.DEPTH*2
+            bar_half_length = self.bar_rect.height / 2 + definitions.DEPTH
             
             if self.on_bar:
                 pos = pygame.mouse.get_pos()                                # Pixel position of the mouse on the screen
                 self.bar_rect.y = pos[1] - self.mouse_diff                  # Determine if the mouse in on the scrollbar
-                if self.bar_rect.top < DEPTH:                               # If the scrollbar is cutting into the image, don't let it
-                    self.bar_rect.top = DEPTH
-                elif self.bar_rect.bottom > (self.SCREEN_HEIGHT - DEPTH):   # If the scrollbar is cutting into the image, don't let it
-                    self.bar_rect.bottom = self.SCREEN_HEIGHT - DEPTH
+                if self.bar_rect.top < definitions.DEPTH:                               # If the scrollbar is cutting into the image, don't let it
+                    self.bar_rect.top = definitions.DEPTH
+                elif self.bar_rect.bottom > (self.SCREEN_HEIGHT - definitions.DEPTH):   # If the scrollbar is cutting into the image, don't let it
+                    self.bar_rect.bottom = self.SCREEN_HEIGHT - definitions.DEPTH
                 self.axis = int(height_diff / (scroll_length * 1.0) * (self.bar_rect.centery - bar_half_length) * -1)
             else:
                 # Don't crash if the height_diff is exactly zero
@@ -120,16 +122,16 @@ class ScrollBar(object):
                 height_diff = 1
             if self.axis < -height_diff:    # If the scrollbar is scrolled farther than the image goes, limit it to keep the image onscreen
                 self.axis = -height_diff
-            scroll_length = self.SCREEN_WIDTH - self.bar_rect.width - DEPTH*2
-            bar_half_length = self.bar_rect.width / 2 + DEPTH
+            scroll_length = self.SCREEN_WIDTH - self.bar_rect.width - definitions.DEPTH*2
+            bar_half_length = self.bar_rect.width / 2 + definitions.DEPTH
 
             if self.on_bar:
                 pos = pygame.mouse.get_pos()                            # Pixel position of the mouse on the screen
                 self.bar_rect.x = pos[0] - self.mouse_diff              # Determine if the mouse in on the scrollbar
-                if self.bar_rect.left < DEPTH:                          # If the scrollbar is cutting into the image, don't let it
-                    self.bar_rect.left = DEPTH  
-                elif self.bar_rect.right > (self.SCREEN_WIDTH - DEPTH): # If the scrollbar is cutting into the image, don't let it
-                    self.bar_rect.right = self.SCREEN_WIDTH - DEPTH
+                if self.bar_rect.left < definitions.DEPTH:                          # If the scrollbar is cutting into the image, don't let it
+                    self.bar_rect.left = definitions.DEPTH  
+                elif self.bar_rect.right > (self.SCREEN_WIDTH - definitions.DEPTH): # If the scrollbar is cutting into the image, don't let it
+                    self.bar_rect.right = self.SCREEN_WIDTH - definitions.DEPTH
                 self.axis = int(height_diff / (scroll_length * 1.0) * (self.bar_rect.centerx - bar_half_length) * -1)
             else:
                 try:    # Don't crash if the height_diff is exactly zero
@@ -137,16 +139,16 @@ class ScrollBar(object):
                 except: # No graphical benefit to setting anything different
                     pass
         self.draw(screen)
-                        
-    '''
-        Comment for the function here
-    '''
+
     def draw(self,screen):
+        '''
+            Comment for the function here
+        '''
         pygame.draw.rect(screen, (197,194,197), self.bar_rect)  # Draw the scrollbar rectangle on the screen
         if self.orientation == "vertical":
-            screen.blit(self.image_1,(self.SCREEN_WIDTH - DEPTH,0))                             # Draw the bar_1_image
-            screen.blit(self.image_2,(self.SCREEN_WIDTH - DEPTH, self.SCREEN_HEIGHT - DEPTH*2)) # Draw the bar_2_image
+            screen.blit(self.image_1,(self.SCREEN_WIDTH - definitions.DEPTH,0))                             # Draw the bar_1_image
+            screen.blit(self.image_2,(self.SCREEN_WIDTH - definitions.DEPTH, self.SCREEN_HEIGHT - definitions.DEPTH*2)) # Draw the bar_2_image
 
         elif self.orientation == "horizontal":
-            screen.blit(self.image_1,(0,self.SCREEN_HEIGHT - DEPTH))                            # Draw the bar_1_image
-            screen.blit(self.image_2,(self.SCREEN_WIDTH - DEPTH*2, self.SCREEN_HEIGHT - DEPTH)) # Draw the bar_2_image
+            screen.blit(self.image_1,(0,self.SCREEN_HEIGHT - definitions.DEPTH))                            # Draw the bar_1_image
+            screen.blit(self.image_2,(self.SCREEN_WIDTH - definitions.DEPTH*2, self.SCREEN_HEIGHT - definitions.DEPTH)) # Draw the bar_2_image
