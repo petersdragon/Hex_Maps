@@ -113,9 +113,6 @@ class MapEditorWindow():
                     block_events = False
                     break
                 block_events = self.select_terrain_menu.handle_event(event)
-                if block_events:
-                    block_events = False
-                    break
                 self.hex_field.handle_event(event)
                 #self.armies.handle_event(event)
                 self.selection_bar.handle_event(event)

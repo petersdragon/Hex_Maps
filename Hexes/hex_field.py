@@ -35,6 +35,7 @@ class Hex_Field():
         self.load_terrain_list()
         self.current_terrain = self.terrain_list[0]
         self.new_hex([0,0,self.current_terrain.name])
+        self.mouse_down = False
         
         # The change in coordinates that takes place when moving into a hex that shares an edge
         self.hex_edges = [Cube_Hex(1, 0, -1, self.radius), Cube_Hex(1, -1, 0, self.radius), Cube_Hex(0, -1, 1, self.radius),
@@ -139,14 +140,14 @@ class Hex_Field():
                 if self.current_terrain.name == name:
                     return -1
 
-
-         
-
     def handle_event(self, event):
         '''
             Comment for the function here
         '''
-        if event.type == pygame.MOUSEBUTTONUP:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.LEFT_CLICK:
+            self.mouse_down = True
+
+        if self.mouse_down:
             (x, y) = pygame.mouse.get_pos() #get mouse coordinates
             # get the center of the hex, the subtract the positions. If the distance is less than the radius, then the hex was clicked
             for hexagon in self.field:
@@ -155,12 +156,15 @@ class Hex_Field():
 
                 distance = sqrt(x_pos**2 + y_pos**2)    # Pythagorean's theorem
                 if distance < self.radius*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
-                    if event.button == definitions.LEFT_CLICK:
+                    if event.type == pygame.MOUSEMOTION:
                         hexagon.terrain = self.current_terrain   # set the terrain type of the hex
                         break    # Exit the loop
-                    elif event.button == definitions.RIGHT_CLICK:
+                    elif event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.RIGHT_CLICK:
                         if hexagon.unit is None:
                             hexagon.addUnit()
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.mouse_down = False
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
