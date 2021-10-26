@@ -34,20 +34,18 @@ class MapEditorWindow():
         # Place the various buttons in an orderly row
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.save_map, text="Save Map", **definitions.BUTTON_STYLE)
         self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.load_map, text="Load Map", **definitions.BUTTON_STYLE)
-        self.select_terrain_button = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.BLACK, definitions.menus_font, self.hex_field.terrain_list, self.select_terrain_button_callback)
-#        self.select_terrain_button = Button((self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), self.hex_field.current_terrain.color, self.select_terrain_button_callback, text=self.hex_field.current_terrain.name, **definitions.TERRAIN_BUTTON_STYLE)
-        self.select_unit_button = Button((self.select_terrain_button.rect.x + self.select_terrain_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **definitions.BUTTON_STYLE)
+        self.select_terrain_menu = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.GRAY, definitions.menus_font, self.hex_field.terrain_list, self.select_terrain_menu_callback)
+        self.select_unit_button = Button((self.select_terrain_menu.rect.x + self.select_terrain_menu.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **definitions.BUTTON_STYLE)
 
         self.control_loop()     # Start the loop for the window
 
 
-    def select_terrain_button_callback(self):
+    def select_terrain_menu_callback(self):
         '''
         Comment for the function here
         '''
-        #self.hex_field.next_terrain()
-        self.hex_field.set_terrain_for_name(self.select_terrain_button.get_selected_option().name)
-        self.select_terrain_button.color = self.hex_field.current_terrain.color
+        self.hex_field.set_terrain_for_name(self.select_terrain_menu.get_selected_option().name)
+        self.select_terrain_menu.color = self.hex_field.current_terrain.color
 
 
     def select_unit_button_callback(self):
@@ -114,13 +112,16 @@ class MapEditorWindow():
                 if end_events:
                     end_events = False
                     break
+                end_events = self.select_terrain_menu.handle_event(event)
+                if end_events:
+                    end_events = False
+                    break
                 self.hex_field.handle_event(event)
                 #self.armies.handle_event(event)
                 self.selection_bar.handle_event(event)
                 self.user_input_file.handle_event(event)
                 self.save_button.handle_event(event)
                 self.load_button.handle_event(event)
-                self.select_terrain_button.handle_event(event)
                 self.select_unit_button.handle_event(event)
 
 
@@ -138,7 +139,7 @@ class MapEditorWindow():
             self.user_input_file.update(self.screen)
             self.save_button.update(self.screen)
             self.load_button.update(self.screen)
-            self.select_terrain_button.update(self.screen)
+            self.select_terrain_menu.update(self.screen)
             self.select_unit_button.update(self.screen)
 
             pygame.display.flip()

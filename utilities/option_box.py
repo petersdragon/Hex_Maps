@@ -71,6 +71,7 @@ class OptionBox():
         '''
             Comment for the Function here.
         '''
+        event_complete = False
         if event.type == pygame.MOUSEBUTTONUP and event.button == definitions.LEFT_CLICK:
             if self.menu_active:
                 self.draw_menu = not self.draw_menu
@@ -79,6 +80,6 @@ class OptionBox():
                 self.selected = self.active_option
                 self.draw_menu = False
                 self.function()
-                return self.active_option
-        
-        return -1
+                event_complete = True
+
+        return event_complete
