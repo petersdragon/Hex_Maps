@@ -121,7 +121,6 @@ class MapEditorWindow():
                 self.load_button.handle_event(event)
                 self.select_unit_button.handle_event(event)
 
-
             self.vertical_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['height']     # Update the scrollbar with a new image height
             self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
 

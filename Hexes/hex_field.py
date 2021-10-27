@@ -35,7 +35,7 @@ class Hex_Field():
         self.load_terrain_list()
         self.current_terrain = self.terrain_list[0]
         self.new_hex([0,0,self.current_terrain.name])
-        self.mouse_down = False
+        self.paint_terrain = False
         
         # The change in coordinates that takes place when moving into a hex that shares an edge
         self.hex_edges = [Cube_Hex(1, 0, -1, self.radius), Cube_Hex(1, -1, 0, self.radius), Cube_Hex(0, -1, 1, self.radius),
@@ -145,9 +145,9 @@ class Hex_Field():
             Comment for the function here
         '''
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.LEFT_CLICK:
-            self.mouse_down = True
+            self.paint_terrain = True
 
-        if self.mouse_down:
+        if self.paint_terrain:
             (x, y) = pygame.mouse.get_pos() #get mouse coordinates
             # get the center of the hex, the subtract the positions. If the distance is less than the radius, then the hex was clicked
             for hexagon in self.field:
@@ -156,7 +156,7 @@ class Hex_Field():
 
                 distance = sqrt(x_pos**2 + y_pos**2)    # Pythagorean's theorem
                 if distance < self.radius*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
-                    if event.type == pygame.MOUSEMOTION:
+                    if event.type == pygame.MOUSEMOTION and self.paint_terrain or event.type == pygame.MOUSEBUTTONUP:
                         hexagon.terrain = self.current_terrain   # set the terrain type of the hex
                         break    # Exit the loop
                     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.RIGHT_CLICK:
@@ -164,7 +164,7 @@ class Hex_Field():
                             hexagon.addUnit()
 
         if event.type == pygame.MOUSEBUTTONUP:
-            self.mouse_down = False
+            self.paint_terrain = False
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
