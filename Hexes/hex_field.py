@@ -5,7 +5,6 @@ Generated code -- CC0 -- No Rights Reserved -- http://www.redblobgames.com/grids
 For my cubic coordinates, I defined my hexes to be x,z,y instead of x,y,z.
 This made it so that both the OddQ x and y value was also the Cubic x and y value
 '''
-from _typeshed import NoneType
 import json
 from os import path
 from math import sqrt
@@ -117,7 +116,6 @@ class Hex_Field():
         for hexagon in self.field:
             hexagon.draw_hex(surface, self.mode, self.scrollbar[0].axis, self.scrollbar[1].axis, self.font)
             
-
     def next_terrain(self):
         '''
             Comment for the function here
@@ -141,7 +139,7 @@ class Hex_Field():
                 if self.current_terrain.name == name:
                     return -1
 
-    def hex_clicked(self):
+    def get_hex_at_mouse_pos(self):
         '''
             Comment for the function here
         '''
@@ -164,9 +162,9 @@ class Hex_Field():
             self.paint_terrain = True
 
         if event.type == pygame.MOUSEMOTION and self.paint_terrain or event.type == pygame.MOUSEBUTTONUP:
-            # hex_clicked will return None when the cursor is on the edge of a hex, over no hex, or the user moves the cursor very quickly.
+            # get_hex_at_mouse_pos will return None when the cursor is on the edge of a hex, over no hex, or the user moves the cursor very quickly.
             try:
-                hexagon = self.hex_clicked()
+                hexagon = self.get_hex_at_mouse_pos()
                 hexagon.terrain = self.current_terrain   # set the terrain type of the hex
             except AttributeError:
                 '''
@@ -175,7 +173,7 @@ class Hex_Field():
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.RIGHT_CLICK:
             try:
-                hexagon = self.hex_clicked()
+                hexagon = self.get_hex_at_mouse_pos()
                 if hexagon.unit is None:
                     hexagon.addUnit()
             except AttributeError:
