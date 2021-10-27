@@ -23,11 +23,11 @@ class HexField():
     def __init__(self, radius, scrollbars, screen, mode=None, offset=0):
         self.modify = {'x1':1.5, 'x2':sqrt(3)/2, 'y':sqrt(3)} # Modifiers to line the hexes up into a uniform, clean grid
         self.surface = pygame.display.get_surface()
-        self.radius = radius         # The radius (pixels from center to vertex) that I want my hexes to have
+        self.radius = radius        # The radius (pixels from center to vertex) that I want my hexes to have
         self.scrollbar = scrollbars
         self.screen = screen
-        self.vertical_hexes = 1
-        self.horizontal_hexes = 1
+        self.vertical_hexes = 1     # Initialize to a 1x1 hex field
+        self.horizontal_hexes = 1   # Initialize to a 1x1 hex field
         self.field = []
         self.offset = offset
         self.file_path =  path.join(definitions.UTILITIES, "terrain_info.json")
@@ -38,16 +38,16 @@ class HexField():
         self.paint_terrain = False
         
         # The change in coordinates that takes place when moving into a hex that shares an edge
-        self.hex_edges = [CubeHex(1, 0, -1, self.radius), CubeHex(1, -1, 0, self.radius), CubeHex(0, -1, 1, self.radius),
-             CubeHex(-1, 0, 1, self.radius), CubeHex(-1, 1, 0, self.radius), CubeHex(0, 1, -1, self.radius)]             
+        #self.hex_edges = [CubeHex(1, 0, -1, self.radius), CubeHex(1, -1, 0, self.radius), CubeHex(0, -1, 1, self.radius),
+        #     CubeHex(-1, 0, 1, self.radius), CubeHex(-1, 1, 0, self.radius), CubeHex(0, 1, -1, self.radius)]             
         
         # The change in coordinates that takes place when moving into a hex that is straight out from a vertex of the hex
-        self.hex_diagonals = [CubeHex(2, -1, -1, self.radius), CubeHex(1, -2, 1, self.radius), CubeHex(-1, -1, 2, self.radius), 
-            CubeHex(-2, 1, 1, self.radius), CubeHex(-1, 2, -1, self.radius), CubeHex(1, 1, -2, self.radius)]
+        #self.hex_diagonals = [CubeHex(2, -1, -1, self.radius), CubeHex(1, -2, 1, self.radius), CubeHex(-1, -1, 2, self.radius), 
+        #    CubeHex(-2, 1, 1, self.radius), CubeHex(-1, 2, -1, self.radius), CubeHex(1, 1, -2, self.radius)]
         
         self.mode = mode
         sysfont = pygame.font.get_default_font()
-        self.font = pygame.font.SysFont(sysfont, 24)
+        self.font = definitions.hex_field_font
 
     def add_row(self):
         '''
@@ -142,6 +142,7 @@ class HexField():
     def get_hex_at_mouse_pos(self):
         '''
             Comment for the function here
+            get_hex_at_mouse_pos will return None when the cursor is on the edge of a hex, over no hex, or the user moves the cursor very quickly.
         '''
         (x, y) = pygame.mouse.get_pos() #get mouse coordinates
         # get the center of the hex, the subtract the positions. If the distance is less than the radius, then the hex was clicked
@@ -161,7 +162,7 @@ class HexField():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.LEFT_CLICK:
             self.paint_terrain = True
 
-        if event.type == pygame.MOUSEMOTION and self.paint_terrain or event.type == pygame.MOUSEBUTTONUP:
+        if (event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONUP) and self.paint_terrain:
             # get_hex_at_mouse_pos will return None when the cursor is on the edge of a hex, over no hex, or the user moves the cursor very quickly.
             try:
                 hexagon = self.get_hex_at_mouse_pos()
@@ -172,6 +173,7 @@ class HexField():
                 '''
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.RIGHT_CLICK:
+            # get_hex_at_mouse_pos will return None when the cursor is on the edge of a hex, over no hex, or the user moves the cursor very quickly.
             try:
                 hexagon = self.get_hex_at_mouse_pos()
                 if hexagon.unit is None:

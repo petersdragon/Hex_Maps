@@ -7,6 +7,8 @@ import pygame
 pygame.font.init()
 sysfont = pygame.font.get_default_font()
 menus_font = pygame.font.SysFont(sysfont, 16)
+hex_field_font = pygame.font.SysFont(sysfont, 24)
+
 
 
 UTILITIES = path.dirname(path.abspath(__file__))  # Get the path to this file
