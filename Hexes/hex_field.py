@@ -5,6 +5,7 @@ Generated code -- CC0 -- No Rights Reserved -- http://www.redblobgames.com/grids
 For my cubic coordinates, I defined my hexes to be x,z,y instead of x,y,z.
 This made it so that both the OddQ x and y value was also the Cubic x and y value
 '''
+from _typeshed import NoneType
 import json
 from os import path
 from math import sqrt
@@ -140,6 +141,21 @@ class Hex_Field():
                 if self.current_terrain.name == name:
                     return -1
 
+    def hex_clicked(self):
+        '''
+            Comment for the function here
+        '''
+        (x, y) = pygame.mouse.get_pos() #get mouse coordinates
+        # get the center of the hex, the subtract the positions. If the distance is less than the radius, then the hex was clicked
+        for hexagon in self.field:
+            x_pos = abs(hexagon.x_pixel + self.scrollbar[0].axis - x)
+            y_pos = abs(hexagon.y_pixel + self.scrollbar[1].axis - y)
+
+            distance = sqrt(x_pos**2 + y_pos**2)    # Pythagorean's theorem
+
+            if distance < self.radius*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
+                return hexagon
+
     def handle_event(self, event):
         '''
             Comment for the function here
@@ -147,24 +163,25 @@ class Hex_Field():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.LEFT_CLICK:
             self.paint_terrain = True
 
-        if self.paint_terrain:
-            (x, y) = pygame.mouse.get_pos() #get mouse coordinates
-            # get the center of the hex, the subtract the positions. If the distance is less than the radius, then the hex was clicked
-            for hexagon in self.field:
-                x_pos = abs(hexagon.x_pixel + self.scrollbar[0].axis - x)
-                y_pos = abs(hexagon.y_pixel + self.scrollbar[1].axis - y)
+        if event.type == pygame.MOUSEMOTION and self.paint_terrain or event.type == pygame.MOUSEBUTTONUP:
+            # hex_clicked will return None when the cursor is on the edge of a hex, over no hex, or the user moves the cursor very quickly.
+            try:
+                hexagon = self.hex_clicked()
+                hexagon.terrain = self.current_terrain   # set the terrain type of the hex
+            except AttributeError:
+                '''
+                   Do something useful here.
+                '''
 
-                distance = sqrt(x_pos**2 + y_pos**2)    # Pythagorean's theorem
-                if distance < self.radius*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
-                    if event.type == pygame.MOUSEMOTION and self.paint_terrain or event.type == pygame.MOUSEBUTTONUP:
-                        hexagon.terrain = self.current_terrain   # set the terrain type of the hex
-                        break    # Exit the loop
-                    elif event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.RIGHT_CLICK:
-                        if hexagon.unit is None:
-                            hexagon.addUnit()
-
-        if event.type == pygame.MOUSEBUTTONUP:
-            self.paint_terrain = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == definitions.RIGHT_CLICK:
+            try:
+                hexagon = self.hex_clicked()
+                if hexagon.unit is None:
+                    hexagon.addUnit()
+            except AttributeError:
+                '''
+                   Do something useful here.
+                '''
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
@@ -179,11 +196,16 @@ class Hex_Field():
             elif event.key == pygame.K_RIGHT:
                 self.add_column()     # Add a row of hexes to the field
 
+        # Always check to see if paint_terrain needs to be false.
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.paint_terrain = False
+
     def get_field_dimensions(self):
         '''
-            Comment for the function here
+            Return how many hexes tall and how many hexes wide the field is
         '''
-        field_height, field_width = self.vertical_hexes*self.radius*self.modify['y'] + 2*self.radius, self.horizontal_hexes*self.radius*self.modify['x1'] + 1.5*self.radius    # Determine the height and width of the hex field based on how many hexes there are in each dimension
+        field_height = self.vertical_hexes*self.radius*self.modify['y'] + 2*self.radius         # Determine the height of the hex field
+        field_width =  self.horizontal_hexes*self.radius*self.modify['x1'] + 1.5*self.radius    # Determine the width of the hex field
         field = {'height':field_height, 'width':field_width}
         return field
 
