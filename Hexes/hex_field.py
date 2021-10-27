@@ -10,8 +10,8 @@ from os import path
 from math import sqrt
 import pygame
 from pygame.constants import DOUBLEBUF
-from Hexes.cube_hex import Cube_Hex
-from Hexes.oddq_hex import OddQ_Hex
+from Hexes.cube_hex import CubeHex
+from Hexes.oddq_hex import OddQHex
 from Hexes.terrain import Terrain
 from utilities import definitions
 
@@ -38,12 +38,12 @@ class HexField():
         self.paint_terrain = False
         
         # The change in coordinates that takes place when moving into a hex that shares an edge
-        self.hex_edges = [Cube_Hex(1, 0, -1, self.radius), Cube_Hex(1, -1, 0, self.radius), Cube_Hex(0, -1, 1, self.radius),
-             Cube_Hex(-1, 0, 1, self.radius), Cube_Hex(-1, 1, 0, self.radius), Cube_Hex(0, 1, -1, self.radius)]             
+        self.hex_edges = [CubeHex(1, 0, -1, self.radius), CubeHex(1, -1, 0, self.radius), CubeHex(0, -1, 1, self.radius),
+             CubeHex(-1, 0, 1, self.radius), CubeHex(-1, 1, 0, self.radius), CubeHex(0, 1, -1, self.radius)]             
         
         # The change in coordinates that takes place when moving into a hex that is straight out from a vertex of the hex
-        self.hex_diagonals = [Cube_Hex(2, -1, -1, self.radius), Cube_Hex(1, -2, 1, self.radius), Cube_Hex(-1, -1, 2, self.radius), 
-            Cube_Hex(-2, 1, 1, self.radius), Cube_Hex(-1, 2, -1, self.radius), Cube_Hex(1, 1, -2, self.radius)]
+        self.hex_diagonals = [CubeHex(2, -1, -1, self.radius), CubeHex(1, -2, 1, self.radius), CubeHex(-1, -1, 2, self.radius), 
+            CubeHex(-2, 1, 1, self.radius), CubeHex(-1, 2, -1, self.radius), CubeHex(1, 1, -2, self.radius)]
         
         self.mode = mode
         sysfont = pygame.font.get_default_font()
@@ -54,7 +54,7 @@ class HexField():
             Comment for the function here
         '''
         for x in range(self.horizontal_hexes):
-            self.field.append(OddQ_Hex(x=x, y=self.vertical_hexes, radius=self.radius, modify=self.modify, terrain=self.terrain_list[0], offset=self.offset))
+            self.field.append(OddQHex(x=x, y=self.vertical_hexes, radius=self.radius, modify=self.modify, terrain=self.terrain_list[0], offset=self.offset))
         self.vertical_hexes += 1
 
     def add_column(self):
@@ -62,7 +62,7 @@ class HexField():
             Comment for the function here
         '''
         for y in range(self.vertical_hexes):
-            self.field.append(OddQ_Hex(x=self.horizontal_hexes, y=y, radius=self.radius, modify=self.modify,terrain=self.terrain_list[0],offset=self.offset))
+            self.field.append(OddQHex(x=self.horizontal_hexes, y=y, radius=self.radius, modify=self.modify,terrain=self.terrain_list[0],offset=self.offset))
         self.horizontal_hexes += 1
 
     def remove_row(self):
@@ -107,7 +107,7 @@ class HexField():
         if int(data[1])+1 > self.vertical_hexes:
             self.vertical_hexes = int(data[1])+1
         terrain = next(x for x in self.terrain_list if x.name == data[2])
-        self.field.append(OddQ_Hex(x=int(data[0]), y=int(data[1]), radius=self.radius, modify=self.modify, offset=self.offset, terrain=terrain))
+        self.field.append(OddQHex(x=int(data[0]), y=int(data[1]), radius=self.radius, modify=self.modify, offset=self.offset, terrain=terrain))
     
     def update(self, surface):
         '''
@@ -209,15 +209,15 @@ class HexField():
 
     # Return the sum of the coordinates of two hexes
 #    def hex_add(self, hexA, hexB):
-#        return Cube_Hex(hexA.x + hexB.x, hexA.y + hexB.y, hexA.z + hexB.z, self.radius)
+#        return CubeHex(hexA.x + hexB.x, hexA.y + hexB.y, hexA.z + hexB.z, self.radius)
 
     # Subtract the coordinates of hex b from hex a (returns coordinate hexA minus hexB)
 #    def hex_subtract(self, hexA, hexB):
-#        return Cube_Hex(hexA.x - hexB.x, hexA.y - hexB.y, hexA.z - hexB.z, self.radius)
+#        return CubeHex(hexA.x - hexB.x, hexA.y - hexB.y, hexA.z - hexB.z, self.radius)
 
-    # Scale the coordinates of a Cube_Hex_Tile by a constant (returns a*k)
+    # Scale the coordinates of a CubeHex_Tile by a constant (returns a*k)
 #    def hex_scale(self, hexA, k):
-#        return Cube_Hex(hexA.x * k, hexA.y * k, hexA.z * k, self.radius)
+#        return CubeHex(hexA.x * k, hexA.y * k, hexA.z * k, self.radius)
 
     # Returns the change in coordinates when moving across an edge in a given direction
 #    def hex_direction(self, direction):
@@ -248,7 +248,7 @@ class HexField():
 #        x = oddqHex.col
 #        y = oddqHex.row - (oddqHex.col - (oddqHex.col&1)) / 2
 #        z = -x-y
-#        return Cube_Hex(x, z, y, self.radius)
+#        return CubeHex(x, z, y, self.radius)
 
 #    def oddq_coord_to_cube(self, x, z):
-#        return Cube_Hex(x, -x-z, (x-z&1)/2, self.radius)
+#        return CubeHex(x, -x-z, (x-z&1)/2, self.radius)
