@@ -37,7 +37,7 @@ class MapEditorWindow():
         self.select_terrain_menu = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.GRAY, definitions.menus_font, self.hex_field.terrain_list, self.select_terrain_menu_callback)
         self.select_unit_button = Button((self.select_terrain_menu.rect.x + self.select_terrain_menu.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **definitions.BUTTON_STYLE)
 
-        self.control_loop()     # Start the loop for the window
+        self.control_loop()     # Start the loop for the window. Ultimately this needs to be called from Main so that when it returns, main can return to the main menu.
 
 
     def select_terrain_menu_callback(self):
@@ -101,7 +101,7 @@ class MapEditorWindow():
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
-                    self.main_menu()            # Instead of going closing the program, go back to the main menu
+                    self.main_menu()            # Instead of going closing the program, go back to the main menu. When done in this fashion, results in a memory leak because it doesn't back out, it CALLS MAIN.
 
                 # handle events for all the objects
                 block_events = self.vertical_scrollbar.handle_event(event)    # Scrollbars must be first to avoid triggering other events when in use
