@@ -16,7 +16,7 @@ from Hexes.terrain import Terrain
 from utilities import definitions
 
 
-class Hex_Field():
+class HexField():
     '''
         Comment for the class here
     '''

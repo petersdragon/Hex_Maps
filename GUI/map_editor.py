@@ -4,7 +4,7 @@
 import os
 import csv
 import pygame
-from Hexes.hex_field import Hex_Field
+from Hexes.hex_field import HexField
 from utilities.option_box import OptionBox
 from Entities.armies import Armies
 from utilities.scrollbar_master.scrollbar import ScrollBar
@@ -27,7 +27,7 @@ class MapEditorWindow():
         self.selection_bar = RectObj(self.screen.get_width(), definitions.TEXT_HEIGHT)
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
         self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
-        self.hex_field = Hex_Field(50, [self.horizontal_scrollbar, self.vertical_scrollbar], self.screen, mode="editor", offset= definitions.TEXT_HEIGHT)
+        self.hex_field = HexField(50, [self.horizontal_scrollbar, self.vertical_scrollbar], self.screen, mode="editor", offset= definitions.TEXT_HEIGHT)
         #self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset= definitions.TEXT_HEIGHT)
         self.user_input_file = InputBox(0, 0, definitions.TEXT_WIDTH, definitions.TEXT_HEIGHT, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         
