@@ -17,7 +17,8 @@ PROGRAM_ROOT = path.dirname(UTILITIES)               # Get the path to this prog
 TEXT_HEIGHT = 32        # Define the height of the input text box (it will hold the map file name)
 TEXT_WIDTH = 200        # Define the width of the input text box (it will hold the map file name)
 BG_COLOR = (0, 0, 0)    # Define the background color of the screen to black
-DEPTH = 20
+DEPTH = 20              # Pixel thickness of the scrollbars
+RADIUS = 50             # The radius (pixels from center to vertex) that I want my hexes to have
 
 # Mouse input values
 LEFT_CLICK = 1

@@ -20,16 +20,15 @@ class HexField():
     '''
         Comment for the class here
     '''
-    def __init__(self, radius, scrollbars, screen, mode=None, offset=0):
+    def __init__(self, scrollbars, screen, **kwargs):
+        self.process_kwargs(kwargs)
         self.modify = {'x1':1.5, 'x2':sqrt(3)/2, 'y':sqrt(3)} # Modifiers to line the hexes up into a uniform, clean grid
         self.surface = pygame.display.get_surface()
-        self.radius = radius        # The radius (pixels from center to vertex) that I want my hexes to have
         self.scrollbar = scrollbars
         self.screen = screen
         self.vertical_hexes = 1     # Initialize to a 1x1 hex field
         self.horizontal_hexes = 1   # Initialize to a 1x1 hex field
         self.field = []
-        self.offset = offset
         self.file_path =  path.join(definitions.UTILITIES, "terrain_info.json")
         self.terrain_list = []
         self.load_terrain_list()
@@ -39,15 +38,28 @@ class HexField():
         
         # The change in coordinates that takes place when moving into a hex that shares an edge
         #self.hex_edges = [CubeHex(1, 0, -1, self.radius), CubeHex(1, -1, 0, self.radius), CubeHex(0, -1, 1, self.radius),
-        #     CubeHex(-1, 0, 1, self.radius), CubeHex(-1, 1, 0, self.radius), CubeHex(0, 1, -1, self.radius)]             
+        #     CubeHex(-1, 0, 1, self.radius), CubeHex(-1, 1, 0, self.radius), CubeHex(0, 1, -1, self.radius)]
         
         # The change in coordinates that takes place when moving into a hex that is straight out from a vertex of the hex
-        #self.hex_diagonals = [CubeHex(2, -1, -1, self.radius), CubeHex(1, -2, 1, self.radius), CubeHex(-1, -1, 2, self.radius), 
+        #self.hex_diagonals = [CubeHex(2, -1, -1, self.radius), CubeHex(1, -2, 1, self.radius), CubeHex(-1, -1, 2, self.radius),
         #    CubeHex(-2, 1, 1, self.radius), CubeHex(-1, 2, -1, self.radius), CubeHex(1, 1, -2, self.radius)]
         
-        self.mode = mode
-        sysfont = pygame.font.get_default_font()
-        self.font = definitions.hex_field_font
+    def process_kwargs(self, kwargs):
+        """
+            Various optional customization you can change by passing kwargs.
+        """
+        settings = {
+            "radius": definitions.RADIUS,       # The radius (pixels from center to vertex) that I want my hexes to have
+            "mode": None,
+            "font": pygame.font.Font(None, 16),
+            "offset": 0,                        # Number of pixels the field of hexes is offset from the top of the screen (y-dimension)
+        }
+        for kwarg in kwargs:
+            if kwarg in settings:
+                settings[kwarg] = kwargs[kwarg]
+            else:
+                raise AttributeError("HexField has no keyword: {}".format(kwarg))
+        self.__dict__.update(settings)
 
     def add_row(self):
         '''
@@ -108,14 +120,14 @@ class HexField():
             self.vertical_hexes = int(data[1])+1
         terrain = next(x for x in self.terrain_list if x.name == data[2])
         self.field.append(OddQHex(x=int(data[0]), y=int(data[1]), radius=self.radius, modify=self.modify, offset=self.offset, terrain=terrain))
-    
+
     def update(self, surface):
         '''
             Comment for the function here
         '''
         for hexagon in self.field:
             hexagon.draw_hex(surface, self.mode, self.scrollbar[0].axis, self.scrollbar[1].axis, self.font)
-            
+
     def next_terrain(self):
         '''
             Comment for the function here
@@ -229,7 +241,7 @@ class HexField():
 #    def hex_edge_neighbor(self, hexagon, direction):
 #        return self.hex_add(hexagon, self.hex_direction(direction))
 
-    # Returns the coordinates of the hex adjacent to the current hex in a given vertex's direction 
+    # Returns the coordinates of the hex adjacent to the current hex in a given vertex's direction
 #    def hex_diagonal_neighbor(self, hexagon, direction):
 #        return self.hex_add(hexagon, self.hex_diagonals[direction])
 
