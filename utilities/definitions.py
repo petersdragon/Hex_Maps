@@ -21,6 +21,7 @@ BG_COLOR = (0, 0, 0)    # Define the background color of the screen to black
 DEPTH = 20              # Pixel thickness of the scrollbars
 RADIUS = 50             # The radius (pixels from center to vertex) that I want my hexes to have
 MENU_BUTTON_BUFFER = 20 # Number of pixels beyond the text that the main menu buttons will extend
+OPTION_BOX_LENGTH = 200 # Number of pixels an OptionBox will take up in the x direction
 
 # Mouse input values
 LEFT_CLICK = 1
@@ -46,9 +47,10 @@ BUTTON_STYLE = {
     "font" : menus_font
 }
 MENU_BUTTON_STYLE = {
-    "hover_color": GRAY,
+    "hover_color": DARK_GRAY,
     "clicked_color": GREEN,
     "clicked_font_color": BLACK,
+    "font_color": BLACK,
     "hover_font_color": BLACK,
     "font" : main_menu_font
 }

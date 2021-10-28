@@ -16,7 +16,7 @@ class MainMenu():
     def __init__(self, title, screen):
         self.screen = screen
         self.screen_center = (self.screen.get_width()//2, self.screen.get_height()//2)
-        self.title = definitions.main_menu_font.render(title, False, definitions.WHITE)
+        self.title = definitions.main_menu_font.render(title, False, definitions.BLACK)
         self.title_location = (definitions.TEXT_HEIGHT,definitions.TEXT_HEIGHT)
         self.title_top_box = pygame.Rect(0, 0, self.screen.get_width(), definitions.TEXT_HEIGHT)
         self.title_bottom_box = pygame.Rect(0, 0, self.screen.get_width()//4, definitions.TEXT_HEIGHT*2)
@@ -40,7 +40,7 @@ class MainMenu():
             Comment for Function here
         '''
         button_size = definitions.main_menu_font.size(button_text)
-        new_button = Button((0, 0, button_size[0] + definitions.MENU_BUTTON_BUFFER, button_size[1] + definitions.MENU_BUTTON_BUFFER), definitions.DARK_GRAY, definitions.GRAY, text=button_text, **definitions.MENU_BUTTON_STYLE)
+        new_button = Button((0, 0, button_size[0] + definitions.MENU_BUTTON_BUFFER, button_size[1] + definitions.MENU_BUTTON_BUFFER), definitions.GRAY, function, text=button_text, **definitions.MENU_BUTTON_STYLE)
         #self.game_start_button = Button()
         #self.map_editor_button = Button((x, y, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, , text="Edit Map", **definitions.BUTTON_STYLE)
         #self.exit_button = Button()
@@ -51,8 +51,19 @@ class MainMenu():
         '''
             Comment for Function here
         '''
-        #self.map_selection_box = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.GRAY, definitions.menus_font, self.hex_field.terrain_list, self.select_terrain_menu_callback)
-        
+        #new_dropselect = DropSelect(label, options)
+        text_height = definitions.main_menu_font.size('ABCDEFGHIJKLMNOPQRSTUVWXYZ')[1]
+        new_option_box = OptionBox(0, 0, definitions.OPTION_BOX_LENGTH, text_height + definitions.MENU_BUTTON_BUFFER, definitions.GRAY, definitions.DARK_GRAY, definitions.main_menu_font, options, self.selected_value)
+        self.menu_list.append(new_option_box)
+        self.recenter_menu()
+        return self.selected_value()
+
+    def selected_value(self):
+        '''
+            Comment for Function here
+        '''
+
+
     def update(self):
         '''
             Comment for Function here
@@ -63,15 +74,41 @@ class MainMenu():
         for obj in self.menu_list:
             obj.update(self.screen)
 
-    def handle_event(self, event):
+    def handle_events(self, event_list):
         '''
             Comment for Function here
         '''
+        for event in event_list:
+            if event.type == pygame.VIDEORESIZE:
+                self.recenter_menu()
+            
+            for obj in self.menu_list:
+                obj.handle_event(event)
 
 
-    # Main menu will have:
-    #   A Title
-    #   Button for starting a game
-    #   Button for Editing a Map
-    #   An optionbox for selecting the map
-    #   Button to Exit
+#class DropSelect():
+#    '''
+#        Comment for Class here
+#    '''
+#    def __init__(self, label, options):
+#        box_size_x = definitions.main_menu_font.size(label)[0]
+#        box_size_y = definitions.main_menu_font.size(label)[1] + definitions.OPTION_BOX_LENGTH
+#        self.label = pygame.Rect(0, 0, self.screen.get_width(), definitions.TEXT_HEIGHT)
+#
+#        box_size_x = definitions.main_menu_font.size(label)[0]
+#        option_box = OptionBox(0, 0, box_size_x + definitions.MENU_BUTTON_BUFFER, definitions.OPTION_BOX_LENGTH + definitions.MENU_BUTTON_BUFFER, definitions.GRAY, definitions.DARK_GRAY, definitions.main_menu_font, options, self.selected_value)
+#
+#    def selected_value(self):
+#        '''
+#            Comment for Function here
+#        '''
+#
+#    def update(self):
+#        '''
+#            Comment for Function here
+#        '''
+#
+#    def handle_event(self, event):
+#        '''
+#            Comment for Function here
+#        '''

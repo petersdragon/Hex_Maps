@@ -16,11 +16,10 @@ class MapEditorWindow():
     '''
         Comment for the class here
     '''
-    def __init__(self, main_menu, file_name='default'):
+    def __init__(self, file_name='default'):
         '''
             Comment for the function here
         '''
-        self.main_menu = main_menu
         self.surface = pygame.display.get_surface()
         self.file_name = file_name  # Name of the map to open
         self.screen = pygame.display.set_mode((self.surface.get_width(), self.surface.get_height()), pygame.RESIZABLE)  # Define the initial screen size and allow the screen to be resized
@@ -101,7 +100,7 @@ class MapEditorWindow():
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
-                    self.main_menu()            # Instead of going closing the program, go back to the main menu. When done in this fashion, results in a memory leak because it doesn't back out, it CALLS MAIN.
+                    pygame.exit()            # Instead of going closing the program, go back to the main menu. When done in this fashion, results in a memory leak because it doesn't back out, it CALLS MAIN.
 
                 # handle events for all the objects
                 block_events = self.vertical_scrollbar.handle_event(event)    # Scrollbars must be first to avoid triggering other events when in use
