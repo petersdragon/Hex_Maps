@@ -8,12 +8,12 @@ from utilities import definitions
 class OptionBox():
     '''
         Comment for the Class here.
+        The option_list contains tuples with the form (str, hex_color)
     '''
-    def __init__(self, x, y, w, h, color, highlight_color, font, option_list, function, selected = 0):
+    def __init__(self, x, y, w, h, color, highlight_color, option_list, function, selected = 0):
         self.color = color
         self.highlight_color = highlight_color
         self.rect = pygame.Rect(x, y, w, h)
-        self.font = font
         self.option_list = option_list
         self.function = function
         self.selected = selected
@@ -34,15 +34,15 @@ class OptionBox():
         '''
         pygame.draw.rect(screen, self.highlight_color if self.menu_active else self.color, self.rect)
         pygame.draw.rect(screen, definitions.BLACK, self.rect, 2)
-        msg = self.font.render(self.option_list[self.selected].name, 1, definitions.BLACK)
+        msg = definitions.menus_font.render(self.option_list[self.selected][0], 1, definitions.BLACK)
         screen.blit(msg, msg.get_rect(center = self.rect.center))
 
         if self.draw_menu:
-            for i, terrain in enumerate(self.option_list):
+            for i, obj in enumerate(self.option_list):
                 rect = self.rect.copy()
                 rect.y += (i+1) * self.rect.height
-                pygame.draw.rect(screen, terrain.color, rect)
-                msg = self.font.render(terrain.name, 1, definitions.BLACK)
+                pygame.draw.rect(screen, obj[1], rect)
+                msg = definitions.menus_font.render(obj[0], 1, definitions.BLACK)
                 screen.blit(msg, msg.get_rect(center = rect.center))
             outer_rect = (self.rect.x, self.rect.y + self.rect.height, self.rect.width, self.rect.height * len(self.option_list))
             pygame.draw.rect(screen, definitions.BLACK, outer_rect, 2)

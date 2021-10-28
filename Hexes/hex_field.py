@@ -37,12 +37,12 @@ class HexField():
         self.paint_terrain = False
         
         # The change in coordinates that takes place when moving into a hex that shares an edge
-        #self.hex_edges = [CubeHex(1, 0, -1, self.radius), CubeHex(1, -1, 0, self.radius), CubeHex(0, -1, 1, self.radius),
-        #     CubeHex(-1, 0, 1, self.radius), CubeHex(-1, 1, 0, self.radius), CubeHex(0, 1, -1, self.radius)]
+        #self.hex_edges = [CubeHex(1, 0, -1, definitions.RADIUS), CubeHex(1, -1, 0, definitions.RADIUS), CubeHex(0, -1, 1, definitions.RADIUS),
+        #     CubeHex(-1, 0, 1, definitions.RADIUS), CubeHex(-1, 1, 0, definitions.RADIUS), CubeHex(0, 1, -1, definitions.RADIUS)]
         
         # The change in coordinates that takes place when moving into a hex that is straight out from a vertex of the hex
-        #self.hex_diagonals = [CubeHex(2, -1, -1, self.radius), CubeHex(1, -2, 1, self.radius), CubeHex(-1, -1, 2, self.radius),
-        #    CubeHex(-2, 1, 1, self.radius), CubeHex(-1, 2, -1, self.radius), CubeHex(1, 1, -2, self.radius)]
+        #self.hex_diagonals = [CubeHex(2, -1, -1, definitions.RADIUS), CubeHex(1, -2, 1, definitions.RADIUS), CubeHex(-1, -1, 2, definitions.RADIUS),
+        #    CubeHex(-2, 1, 1, definitions.RADIUS), CubeHex(-1, 2, -1, definitions.RADIUS), CubeHex(1, 1, -2, definitions.RADIUS)]
         
     def process_kwargs(self, kwargs):
         """
@@ -66,7 +66,7 @@ class HexField():
             Comment for the function here
         '''
         for x in range(self.horizontal_hexes):
-            self.field.append(OddQHex(x=x, y=self.vertical_hexes, radius=self.radius, modify=self.modify, terrain=self.terrain_list[0], offset=self.offset))
+            self.field.append(OddQHex(x=x, y=self.vertical_hexes, radius=definitions.RADIUS, modify=self.modify, terrain=self.terrain_list[0], offset=self.offset))
         self.vertical_hexes += 1
 
     def add_column(self):
@@ -74,7 +74,7 @@ class HexField():
             Comment for the function here
         '''
         for y in range(self.vertical_hexes):
-            self.field.append(OddQHex(x=self.horizontal_hexes, y=y, radius=self.radius, modify=self.modify,terrain=self.terrain_list[0],offset=self.offset))
+            self.field.append(OddQHex(x=self.horizontal_hexes, y=y, radius=definitions.RADIUS, modify=self.modify,terrain=self.terrain_list[0],offset=self.offset))
         self.horizontal_hexes += 1
 
     def remove_row(self):
@@ -105,8 +105,8 @@ class HexField():
         '''
             Comment for the function here
         '''
-        with open(self.file_path, newline='') as f:
-            obj = json.loads(f.read())
+        with open(self.file_path, newline='') as file:
+            obj = json.loads(file.read())
             for terrain in obj:
                 self.terrain_list.append(Terrain(**terrain))
 
@@ -119,7 +119,7 @@ class HexField():
         if int(data[1])+1 > self.vertical_hexes:
             self.vertical_hexes = int(data[1])+1
         terrain = next(x for x in self.terrain_list if x.name == data[2])
-        self.field.append(OddQHex(x=int(data[0]), y=int(data[1]), radius=self.radius, modify=self.modify, offset=self.offset, terrain=terrain))
+        self.field.append(OddQHex(x=int(data[0]), y=int(data[1]), radius=definitions.RADIUS, modify=self.modify, offset=self.offset, terrain=terrain))
 
     def update(self, surface):
         '''
@@ -164,7 +164,7 @@ class HexField():
 
             distance = sqrt(x_pos**2 + y_pos**2)    # Pythagorean's theorem
 
-            if distance < self.radius*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
+            if distance < definitions.RADIUS*0.8:  # multiply by constant to constrain the radius to inside the visible hex, so that the hexes never overlap their radii
                 return hexagon
 
     def handle_event(self, event):
@@ -216,22 +216,22 @@ class HexField():
         '''
             Return how many hexes tall and how many hexes wide the field is
         '''
-        field_height = self.vertical_hexes*self.radius*self.modify['y'] + 2*self.radius         # Determine the height of the hex field
-        field_width =  self.horizontal_hexes*self.radius*self.modify['x1'] + 1.5*self.radius    # Determine the width of the hex field
+        field_height = self.vertical_hexes*definitions.RADIUS*self.modify['y'] + 2*definitions.RADIUS         # Determine the height of the hex field
+        field_width =  self.horizontal_hexes*definitions.RADIUS*self.modify['x1'] + 1.5*definitions.RADIUS    # Determine the width of the hex field
         field = {'height':field_height, 'width':field_width}
         return field
 
     # Return the sum of the coordinates of two hexes
 #    def hex_add(self, hexA, hexB):
-#        return CubeHex(hexA.x + hexB.x, hexA.y + hexB.y, hexA.z + hexB.z, self.radius)
+#        return CubeHex(hexA.x + hexB.x, hexA.y + hexB.y, hexA.z + hexB.z, definitions.RADIUS)
 
     # Subtract the coordinates of hex b from hex a (returns coordinate hexA minus hexB)
 #    def hex_subtract(self, hexA, hexB):
-#        return CubeHex(hexA.x - hexB.x, hexA.y - hexB.y, hexA.z - hexB.z, self.radius)
+#        return CubeHex(hexA.x - hexB.x, hexA.y - hexB.y, hexA.z - hexB.z, definitions.RADIUS)
 
     # Scale the coordinates of a CubeHex_Tile by a constant (returns a*k)
 #    def hex_scale(self, hexA, k):
-#        return CubeHex(hexA.x * k, hexA.y * k, hexA.z * k, self.radius)
+#        return CubeHex(hexA.x * k, hexA.y * k, hexA.z * k, definitions.RADIUS)
 
     # Returns the change in coordinates when moving across an edge in a given direction
 #    def hex_direction(self, direction):
@@ -262,7 +262,7 @@ class HexField():
 #        x = oddqHex.col
 #        y = oddqHex.row - (oddqHex.col - (oddqHex.col&1)) / 2
 #        z = -x-y
-#        return CubeHex(x, z, y, self.radius)
+#        return CubeHex(x, z, y, definitions.RADIUS)
 
 #    def oddq_coord_to_cube(self, x, z):
-#        return CubeHex(x, -x-z, (x-z&1)/2, self.radius)
+#        return CubeHex(x, -x-z, (x-z&1)/2, definitions.RADIUS)

@@ -37,7 +37,8 @@ GRAY = (150,150,150)
 DARK_GRAY = (75,75,75)
 
 BUTTON_STYLE = {
-    "hover_color": GRAY,
+    "font_color": BLACK,
+    "hover_color": DARK_GRAY,
     "clicked_color": GREEN,
     "clicked_font_color": BLACK,
     "hover_font_color": BLACK,

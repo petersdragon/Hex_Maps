@@ -31,11 +31,16 @@ class MapEditorWindow():
         #self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset= definitions.TEXT_HEIGHT)
         self.user_input_file = InputBox(0, 0, definitions.TEXT_WIDTH, definitions.TEXT_HEIGHT, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         
+        terrain_names = []
+        for terrain in self.hex_field.terrain_list:
+            terrain_names.append((terrain.name, terrain.color))
+
         # Place the various buttons in an orderly row
-        self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.save_map, text="Save Map", **definitions.BUTTON_STYLE)
-        self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.load_map, text="Load Map", **definitions.BUTTON_STYLE)
-        self.select_terrain_menu = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.GRAY, definitions.menus_font, self.hex_field.terrain_list, self.select_terrain_menu_callback)
-        self.select_unit_button = Button((self.select_terrain_menu.rect.x + self.select_terrain_menu.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.DARK_GRAY, self.select_unit_button_callback, text= "Add Unit", **definitions.BUTTON_STYLE)
+        self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.GRAY, self.save_map, text="Save Map", **definitions.BUTTON_STYLE)
+        self.load_button = Button((self.save_button.rect.x + self.save_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.GRAY, self.load_map, text="Load Map", **definitions.BUTTON_STYLE)
+        self.select_terrain_menu = OptionBox(self.load_button.rect.x + self.load_button.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, self.hex_field.current_terrain.color, definitions.DARK_GRAY, terrain_names, self.select_terrain_menu_callback)
+        self.select_unit_side_menu = OptionBox(self.select_terrain_menu.rect.x + self.select_terrain_menu.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, definitions.GRAY, definitions.DARK_GRAY, terrain_names, self.select_unit_side_menu_callback)
+        self.select_unit_type_menu = OptionBox(self.select_unit_side_menu.rect.x + self.select_unit_side_menu.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT, definitions.GRAY, definitions.DARK_GRAY, terrain_names, self.select_unit_type_menu_callback)
 
         self.control_loop()     # Start the loop for the window
 
@@ -44,15 +49,24 @@ class MapEditorWindow():
         '''
         Comment for the function here
         '''
-        self.hex_field.set_terrain_for_name(self.select_terrain_menu.get_selected_option().name)
+        self.hex_field.set_terrain_for_name(self.select_terrain_menu.get_selected_option()[0])
         self.select_terrain_menu.color = self.hex_field.current_terrain.color
 
+    def select_unit_side_menu_callback(self):
+        '''
+        Comment for the function here
+        '''
 
-    def select_unit_button_callback(self):
+    def select_unit_type_menu_callback(self):
         '''
-            Comment for the function here
+        Comment for the function here
         '''
-        #self.armies.toggle_menu()
+
+    #def select_unit_button_callback(self):
+    #    '''
+    #        Comment for the function here
+    #    '''
+    #    self.armies.toggle_menu()
         
     def load_map(self):
         '''
@@ -101,7 +115,7 @@ class MapEditorWindow():
         while True:     # Main update loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Handle program exit event
-                    self.main_menu()            # Instead of going closing the program, go back to the main menu
+                    self.main_menu()            # Instead of going closing the program, go back to the main menu. This needs to be fixed, as it currently calls main() again.
 
                 # handle events for all the objects
                 block_events = self.vertical_scrollbar.handle_event(event)    # Scrollbars must be first to avoid triggering other events when in use
@@ -119,7 +133,8 @@ class MapEditorWindow():
                 self.user_input_file.handle_event(event)
                 self.save_button.handle_event(event)
                 self.load_button.handle_event(event)
-                self.select_unit_button.handle_event(event)
+                self.select_unit_side_menu.handle_event(event)
+                self.select_unit_type_menu.handle_event(event)
 
             self.vertical_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['height']     # Update the scrollbar with a new image height
             self.horizontal_scrollbar.image_dimension = self.hex_field.get_field_dimensions()['width']    # Update the scrollbar with a new image width
@@ -136,7 +151,8 @@ class MapEditorWindow():
             self.save_button.update(self.screen)
             self.load_button.update(self.screen)
             self.select_terrain_menu.update(self.screen)
-            self.select_unit_button.update(self.screen)
+            self.select_unit_side_menu.update(self.screen)
+            self.select_unit_type_menu.update(self.screen)
 
             pygame.display.flip()
 
