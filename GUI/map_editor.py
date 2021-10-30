@@ -28,12 +28,16 @@ class MapEditorWindow():
         self.vertical_scrollbar = ScrollBar(0, pygame.display.get_surface(),"vertical")        # Define the initial location and orientation of the scrollbar
         self.horizontal_scrollbar = ScrollBar(0, pygame.display.get_surface(),"horizontal")     # Define the initial location and orientation of the scrollbar
         self.hex_field = HexField([self.horizontal_scrollbar, self.vertical_scrollbar], self.screen, mode="editor", font=definitions.hex_field_font, offset=definitions.TEXT_HEIGHT)
-        #self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset= definitions.TEXT_HEIGHT)
+        self.armies = Armies([self.horizontal_scrollbar, self.vertical_scrollbar], offset= definitions.TEXT_HEIGHT)
         self.user_input_file = InputBox(0, 0, definitions.TEXT_WIDTH, definitions.TEXT_HEIGHT, self.file_name)    # Input text box (holds the name of the map file stored as CSV)
         
         terrain_names = []
         for terrain in self.hex_field.terrain_list:
             terrain_names.append((terrain.name, terrain.color))
+
+        army_names = []
+        unit_types = []
+#        for army in self.armies.
 
         # Place the various buttons in an orderly row
         self.save_button = Button((self.user_input_file.rect.x + self.user_input_file.rect.width, 0, definitions.TEXT_WIDTH/2, definitions.TEXT_HEIGHT), definitions.GRAY, self.save_map, text="Save Map", **definitions.BUTTON_STYLE)

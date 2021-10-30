@@ -3,7 +3,7 @@
 '''
 import json
 import pygame
-from Entities.unit import Unit, UnitInfo
+from Entities.unit import Unit
 from utilities import definitions
 
 class Armies():
@@ -14,7 +14,7 @@ class Armies():
         self.scrollbar = scrollbars
         self.unit_info = []
         self.file_path = definitions.UTILITIES + "//unit_info.json"
-        self.unit_entry = []
+        self.unit_entry = {}
         self.load_unit_info()
         self.armies = []
         self.menu_visible = False
@@ -23,34 +23,29 @@ class Armies():
         '''
             Comment for the function here
         '''
-        with open(self.file_path, newline='') as f:
-            obj = json.loads(f.read())
-            for unit in obj:
-                self.unit_info.append(UnitInfo(**unit))
-            # Build menu
-            sides = list(set([x['side'] for x in obj])) # Get the unique sides in the list of unit_info
+        with open(self.file_path, newline='') as file:
+            obj = json.loads(file.read())
+            sides = list(set([x['side'] for x in obj])) # Get the unique sides in the list of units
+            side_dict = {}
             for side in sides:
                 armors = list(set([x['armor'] for x in obj if x['side'] == side]))    # Get the unique armors for each side in the list of unit_info
-                self.unit_entry.append(side)
-                armor_entry = []
+                armor_dict = {}
                 for armor in armors:
-                    type_entry = []
-                    item = [x for x in obj if x['side'] == side and x['armor'] == armor][0]
-                    # Allow Archer option if Archer_Attack > 0, Allow Melee option if Melee_Attack > 0 
-                    if item['archer_attack'] > 0:
-                        type_entry.append("Archer")
-                    if item['melee_attack'] > 0:
-                        type_entry.append("Melee")
-                    if len(type_entry) > 0:
-                        armor_entry.append(armor)
-                        armor_entry.append(type_entry)
-                self.unit_entry.append(armor_entry)
+                    attack_type = [x for x in obj if x['side'] == side and x['armor'] == armor][0]
+                    valid_types = []
+                    # Allow Archer option if Archer_Attack > 0, Allow Melee option if Melee_Attack > 0
+                    if attack_type['melee_attack'] > 0:
+                        valid_types.append('Melee')
+                    if attack_type['archer_attack'] > 0:
+                        valid_types.append('Archer')
+                    armor_dict[armor] = valid_types
+                side_dict[side] = armor_dict
 
-    def add_unit(self,x,y,team,data):
+    def recruit_unit(self,x,y,unit_info):
         '''
             Comment for the function here
         '''
-        self.armies.append(Unit(x,y,team,data))
+        self.armies.append(Unit(x,y,unit_info))
 
     def update(self, surface):
         '''
