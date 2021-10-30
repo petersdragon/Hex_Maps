@@ -12,11 +12,10 @@ class Armies():
     '''
     def __init__(self, scrollbars, offset=0):
         self.scrollbar = scrollbars
-        self.unit_info = []
+        self.unit_info = {}
         self.file_path = definitions.UTILITIES + "//unit_info.json"
-        self.unit_entry = {}
         self.load_unit_info()
-        self.armies = []
+        #self.armies = []
         self.menu_visible = False
 
     def load_unit_info(self):
@@ -26,7 +25,6 @@ class Armies():
         with open(self.file_path, newline='') as file:
             obj = json.loads(file.read())
             sides = list(set([x['side'] for x in obj])) # Get the unique sides in the list of units
-            side_dict = {}
             for side in sides:
                 armors = list(set([x['armor'] for x in obj if x['side'] == side]))    # Get the unique armors for each side in the list of unit_info
                 armor_dict = {}
@@ -35,11 +33,15 @@ class Armies():
                     valid_types = []
                     # Allow Archer option if Archer_Attack > 0, Allow Melee option if Melee_Attack > 0
                     if attack_type['melee_attack'] > 0:
-                        valid_types.append('Melee')
+                        melee_dict = {}
+                        melee_dict['Melee'] = 'Melee'
+                        valid_types.append(melee_dict)
                     if attack_type['archer_attack'] > 0:
-                        valid_types.append('Archer')
+                        archer_dict = {}
+                        archer_dict['Archer'] = 'Archer'
+                        valid_types.append(archer_dict)
                     armor_dict[armor] = valid_types
-                side_dict[side] = armor_dict
+                self.unit_info[side] = armor_dict
 
     def recruit_unit(self,x,y,unit_info):
         '''
