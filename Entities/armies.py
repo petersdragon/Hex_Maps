@@ -17,10 +17,15 @@ class Armies():
         self.load_unit_info()
         #self.armies = []
         self.menu_visible = False
+        print(self.unit_info['Gondor'])
+        print(self.unit_info['Gondor']['Hero'])
+        print(self.unit_info['Gondor']['Hero']['Archer'])
+        print(self.unit_info['Gondor']['Hero']['Archer'])
 
     def load_unit_info(self):
         '''
-            Comment for the function here
+            Read all unit info and organize it into dictionaries.
+            Structure: {sides{armors{melee, archer}}}
         '''
         with open(self.file_path, newline='') as file:
             obj = json.loads(file.read())
@@ -30,17 +35,13 @@ class Armies():
                 armor_dict = {}
                 for armor in armors:
                     attack_type = [x for x in obj if x['side'] == side and x['armor'] == armor][0]
-                    valid_types = []
                     # Allow Archer option if Archer_Attack > 0, Allow Melee option if Melee_Attack > 0
+                    attack_type_dict = {}
                     if attack_type['melee_attack'] > 0:
-                        melee_dict = {}
-                        melee_dict['Melee'] = 'Melee'
-                        valid_types.append(melee_dict)
+                        attack_type_dict['Melee'] = 'Melee'
                     if attack_type['archer_attack'] > 0:
-                        archer_dict = {}
-                        archer_dict['Archer'] = 'Archer'
-                        valid_types.append(archer_dict)
-                    armor_dict[armor] = valid_types
+                        attack_type_dict['Archer'] = 'Archer'
+                    armor_dict[armor] = attack_type_dict
                 self.unit_info[side] = armor_dict
 
     def recruit_unit(self,x,y,unit_info):
